@@ -49,7 +49,7 @@
             ## Sites sidebar
             #parse("/vm/morpheus/includeSiteNav.vm")
 
-            ## Page
+            ## Page content area 
             #parse("/vm/morpheus/includePage.vm")
 
             ## Help sidebar
