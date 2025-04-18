@@ -245,6 +245,8 @@ public class SkinnableCharonPortal extends HttpServlet implements Portal
 	private boolean forceContainer = false;
 
 	private boolean sakaiTutorialEnabled = true;
+
+	private boolean skipContainer = false;
 	
 	private boolean sakaiThemesEnabled = true;
 	private boolean sakaiThemeSwitcherEnabled = false;
@@ -771,103 +773,114 @@ public class SkinnableCharonPortal extends HttpServlet implements Portal
 	 * @throws javax.servlet.ServletException.
 	 * @throws java.io.IOException.
 	 */
-	protected void doGet(HttpServletRequest req, HttpServletResponse res)
-	throws ServletException, IOException
-	{
+protected void doGet(HttpServletRequest req, HttpServletResponse res)
+throws ServletException, IOException
+{
+    int stat = PortalHandler.NEXT;
+    try
+    {
+        basicAuth.doLogin(req);
+        if (!ToolRenderService.preprocess(this,req, res, getServletContext()))
+        {
+            return;
+        }
 
-		int stat = PortalHandler.NEXT;
-		try
-		{
-			basicAuth.doLogin(req);
-			if (!ToolRenderService.preprocess(this,req, res, getServletContext()))
-			{
-				return;
-			}
+        // Check to see if the pre-process step has redirected us - if so,
+        // our work is done here - we will likely come back again to finish
+        // our work.
+        if (res.isCommitted())
+        {
+            return;
+        }
 
-			// Check to see if the pre-process step has redirected us - if so,
-			// our work is done here - we will likely come back again to finish
-			// our
-			// work.
-			if (res.isCommitted())
-			{
-				return;
-			}
+        // get the Sakai session
+        Session session = SessionManager.getCurrentSession();
 
-			// get the Sakai session
-			Session session = SessionManager.getCurrentSession();
+        // recognize what to do from the path
+        String option = URLUtils.getSafePathInfo(req);
+        
+        // Check if this is the root path and user is not logged in
+        if ((option == null || "/".equals(option)) && session.getUserId() == null) {
+            // Save the portal URL as the return URL after login
+            String portalUrl = ServerConfigurationService.getPortalUrl();
+            session.setAttribute(Tool.HELPER_DONE_URL, portalUrl);
+            
+            // Show login page directly without redirect
+            ActiveTool tool = ActiveToolManager.getActiveTool("sakai.login");
+            String loginPath = (!forceContainer && skipContainer ? "/xlogin" : "/relogin");
+            String context = req.getContextPath() + req.getServletPath() + loginPath;
+            tool.help(req, res, context, loginPath);
+            return;
+        }
 
-			// recognize what to do from the path
-			String option = URLUtils.getSafePathInfo(req);
+        String[] parts = getParts(req);
 
-			String[] parts = getParts(req);
+        Map<String, PortalHandler> handlerMap = portalService.getHandlerMap(this);
 
-			Map<String, PortalHandler> handlerMap = portalService.getHandlerMap(this);
+        // begin SAK-19089
+        // if not logged in and accessing "/", redirect to gatewaySiteUrl
+        if ((gatewaySiteUrl != null) && (option == null || "/".equals(option) ) 
+                && (session.getUserId() == null)) 
+        {
+            // redirect to gatewaySiteURL 
+            res.sendRedirect(gatewaySiteUrl);
+            return;
+        }
+        // end SAK-19089
 
-			// begin SAK-19089
-			// if not logged in and accessing "/", redirect to gatewaySiteUrl
-			if ((gatewaySiteUrl != null) && (option == null || "/".equals(option) ) 
-					&& (session.getUserId() == null)) 
-			{
-				// redirect to gatewaySiteURL 
-				res.sendRedirect(gatewaySiteUrl);
-				return;
-			}
-			// end SAK-19089
+        // Look up the handler and dispatch
+        PortalHandler ph = handlerMap.get(parts[1]);
+        if (ph != null)
+        {
+            stat = ph.doGet(parts, req, res, session);
+            if (res.isCommitted())
+            {
+                if (stat != PortalHandler.RESET_DONE)
+                {
+                    portalService.setResetState(null);
+                }
+                return;
+            }
+        }
+        if (stat == PortalHandler.NEXT)
+        {
+            for (Iterator<PortalHandler> i = handlerMap.values().iterator(); i.hasNext();)
+            {
+                ph = i.next();
+                stat = ph.doGet(parts, req, res, session);
+                if (res.isCommitted())
+                {
+                    if (stat != PortalHandler.RESET_DONE)
+                    {
+                        portalService.setResetState(null);
+                    }
+                    return;
+                }
+                // this should be
+                if (stat != PortalHandler.NEXT)
+                {
+                    break;
+                }
+            }
+        }
+        if (stat == PortalHandler.NEXT)
+        {
+            doError(req, res, session, Portal.ERROR_SITE);
+        }
+		
+    }
+    catch (Throwable t)
+    {
+        doThrowableError(req, res, t);
+    }
 
-			// Look up the handler and dispatch
-			PortalHandler ph = handlerMap.get(parts[1]);
-			if (ph != null)
-			{
-				stat = ph.doGet(parts, req, res, session);
-				if (res.isCommitted())
-				{
-					if (stat != PortalHandler.RESET_DONE)
-					{
-						portalService.setResetState(null);
-					}
-					return;
-				}
-			}
-			if (stat == PortalHandler.NEXT)
-			{
-
-				for (Iterator<PortalHandler> i = handlerMap.values().iterator(); i.hasNext();)
-				{
-					ph = i.next();
-					stat = ph.doGet(parts, req, res, session);
-					if (res.isCommitted())
-					{
-						if (stat != PortalHandler.RESET_DONE)
-						{
-							portalService.setResetState(null);
-						}
-						return;
-					}
-					// this should be
-					if (stat != PortalHandler.NEXT)
-					{
-						break;
-					}
-				}
-			}
-			if (stat == PortalHandler.NEXT)
-			{
-				doError(req, res, session, Portal.ERROR_SITE);
-			}
-
-		}
-		catch (Throwable t)
-		{
-			doThrowableError(req, res, t);
-		}
-
-		// Make sure to clear any reset State at the end of the request unless
-		// we *just* set it
-		if (stat != PortalHandler.RESET_DONE)
-		{
-			portalService.setResetState(null);
-		}
-	}
+    // Make sure to clear any reset State at the end of the request unless
+    // we *just* set it
+    if (stat != PortalHandler.RESET_DONE)
+    {
+        portalService.setResetState(null);
+    }
+}
 
 	private String[] getParts(HttpServletRequest req) {
 
@@ -2133,7 +2146,7 @@ public class SkinnableCharonPortal extends HttpServlet implements Portal
 		// get the writer
 		PrintWriter out = res.getWriter();
 
-		try
+		try   	
 		{
 			PortalRenderEngine rengine = rcontext.getRenderEngine();
 			rengine.render(template, rcontext, out);
