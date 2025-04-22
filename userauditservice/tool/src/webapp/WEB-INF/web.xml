@@ -37,6 +37,21 @@
     <param-value>true</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>com.sun.faces.validateXml</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>jakarta.faces.FACES_CONTEXT_FACTORY</param-name>
+    <param-value>org.glassfish.faces.FacesContextFactoryImpl</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>jakarta.faces.APPLICATION_FACTORY</param-name>
+    <param-value>org.glassfish.faces.ApplicationFactoryImpl</param-value>
+  </context-param>
+
   <filter>
     <filter-name>MyFacesExtensionsFilter</filter-name>
     <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
@@ -67,7 +82,7 @@
 
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
 

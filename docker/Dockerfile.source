@@ -1,6 +1,6 @@
 FROM markhobson/maven-chrome:jdk-11 AS build
 
-ARG release=main
+ARG release=jsf-issue-RnD
 
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 COPY maven/settings.xml /usr/share/maven/conf/settings.xml
