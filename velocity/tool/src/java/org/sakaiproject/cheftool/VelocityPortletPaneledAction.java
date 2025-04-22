@@ -125,7 +125,13 @@ public abstract class VelocityPortletPaneledAction extends ToolServlet
 	{
 		HttpServletRequest req = rundata.getRequest();
 		Session session = SessionManager.getCurrentSession();
-		
+		try {
+			Class<?> clazz = Class.forName("jakarta.faces.context.FacesContextFactory");
+			System.out.println("✅ Class found: " + clazz.getName()); }
+		catch (ClassNotFoundException e) {
+			System.err.println("❌ Class not found: jakarta.faces.context.FacesContextFactory");
+			e.printStackTrace();
+		}
 		if (getVmReference("is_wireless_device", req) == null)
 		{
 			Object c = session.getAttribute("is_wireless_device");

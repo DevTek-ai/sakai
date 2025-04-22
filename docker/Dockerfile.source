@@ -1,4 +1,4 @@
-FROM markhobson/maven-chrome:jdk-11 as build
+FROM markhobson/maven-chrome:jdk-11 AS build
 
 ARG release=main
 
@@ -25,6 +25,7 @@ COPY --from=build /deploy/components /usr/local/tomcat/components/
 # This might be able to deploy to a different lib directory
 COPY --from=build /deploy/lib /usr/local/tomcat/lib/
 COPY --from=build /deploy/webapps /usr/local/tomcat/webapps/
+RUN sed -i '/^common.loader\=/ s/$/,"\$\{catalina.base\}\/lib\/*.jar"/' /usr/local/tomcat/conf/catalina.properties
 RUN curl -L -o /usr/local/tomcat/lib/mysql-connector-java-8.0.33.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.33/mysql-connector-java-8.0.33.jar
 
 COPY tomcat/bin/entrypoint.sh /entrypoint.sh
