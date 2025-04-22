@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<registration>
+
+	<tool
+			id="sakai.dummy"
+			title="Dummy Panel"
+			description="A placeholder admin tool for demonstration purposes.">
+
+	</tool>
+
+</registration>
