@@ -76,3 +76,8 @@ CATALINA_OPTS="$CATALINA_OPTS -Dsakai.cookieName=SAKAIID"
 # if [[ $(pwd) =~ "mysql8" ]]; then
 #     CLASSPATH="/var/jdbc-connectors/mysql-connector-j-8.0.31.jar"
 # fi
+
+
+echo "JAVA_OPTS=$JAVA_OPTS"
+
+echo "CATALINA_OPTS=$CATALINA_OPTS"
