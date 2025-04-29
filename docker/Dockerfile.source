@@ -1,6 +1,6 @@
 FROM markhobson/maven-chrome:jdk-17 as build
 
-ARG release=master_build
+ARG release=master1
 
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 COPY maven/settings.xml /usr/share/maven/conf/settings.xml
