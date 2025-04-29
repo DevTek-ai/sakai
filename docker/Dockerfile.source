@@ -14,6 +14,7 @@ RUN mvn clean && rm -rf /root/.m2/repository
 FROM tomcat:9-jdk17-temurin
 
 COPY tomcat/conf/* /usr/local/tomcat/conf/
+COPY tomcat/lib/* /usr/local/tomcat/lib/
 
 RUN mkdir -p /usr/local/tomcat/sakai /usr/local/tomcat/bin
 
