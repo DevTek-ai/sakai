@@ -77,6 +77,8 @@ CATALINA_OPTS="$CATALINA_OPTS -Dsakai.cookieName=SAKAIID"
 #     CLASSPATH="/var/jdbc-connectors/mysql-connector-j-8.0.31.jar"
 # fi
 
+export CLASSPATH="$CLASSPATH:/usr/local/tomcat/lib/mysql-connector-j-8.0.31.jar"
+echo $CLASSPATH
 echo "JAVA_OPTS=$JAVA_OPTS"
 
 echo "CATALINA_OPTS=$CATALINA_OPTS"
