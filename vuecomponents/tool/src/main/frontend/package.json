@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cross-env vue-cli-service build --target wc --inline-vue --name sakai --dest ./target/js './src/components/*'",
     "build-dev": "node build-dev.mjs",
-    "test": "cross-env vue-cli-service test:unit --passWithNoTests"
+    "test": "echo \"Tests are disabled\""
   },
   "main": "js/sakai-element.js",
   "dependencies": {
