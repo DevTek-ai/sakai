@@ -8,7 +8,7 @@ CATALINA_OPTS="-server \
                -Djava.net.preferIPv4Stack=true"
 
 # Memory size
-CATALINA_OPTS="$CATALINA_OPTS -Xms2g -Xmx2g"
+CATALINA_OPTS="$CATALINA_OPTS -Xms2g -Xmx3g"
 
 # Generational New size
 CATALINA_OPTS="$CATALINA_OPTS -XX:NewSize=500m -XX:MaxNewSize=500m"
@@ -73,6 +73,10 @@ CATALINA_OPTS="$CATALINA_OPTS -Dsakai.cookieName=SAKAIID"
 #	                          -Dcom.sun.management.jmxremote.authenticate=false" 
 
 # JDBC Driver
-if [[ $(pwd) =~ "mysql8" ]]; then
-    CLASSPATH="/var/jdbc-connectors/mysql-connector-j-8.0.31.jar"
-fi
+# if [[ $(pwd) =~ "mysql8" ]]; then
+#     CLASSPATH="/var/jdbc-connectors/mysql-connector-j-8.0.31.jar"
+# fi
+
+echo "JAVA_OPTS=$JAVA_OPTS"
+
+echo "CATALINA_OPTS=$CATALINA_OPTS"

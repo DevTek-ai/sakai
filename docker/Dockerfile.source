@@ -20,6 +20,7 @@ RUN mkdir -p /usr/local/tomcat/sakai /usr/local/tomcat/bin
 
 COPY tomcat/sakai/* /usr/local/tomcat/sakai/
 COPY tomcat/bin/* /usr/local/tomcat/bin/
+RUN chmod +x /usr/local/tomcat/bin/setenv.sh
 
 COPY --from=build /deploy/components /usr/local/tomcat/components/
 
