@@ -1734,68 +1734,6 @@ public class SiteAction extends PagedResourceActionII {
 			context.put("sortby_publish", SortType.PUBLISHED_ASC.toString());
 			context.put("sortby_createdon", SortType.CREATED_ON_ASC.toString());
 			context.put("sortby_softlydeleted", SortType.SOFTLY_DELETED_ASC.toString());
-			
-			
-			// Custom Values 
-			// Create a list to hold school data
-			List<Map<String, Object>> schoolsList = new ArrayList<>();
-			
-			// Add first school
-			Map<String, Object> school1 = new HashMap<>();
-			school1.put("schoole_name", "BHA SCHOOL");
-			school1.put("school_status", true);
-			school1.put("school_state", "CA");
-			school1.put("school_teachers", "15");
-			school1.put("school_students", "75");
-			schoolsList.add(school1);
-			
-			// Add second school
-			Map<String, Object> school2 = new HashMap<>();
-			school2.put("schoole_name", "Oak Ridge High");
-			school2.put("school_status", true);
-			school2.put("school_state", "NY");
-			school2.put("school_teachers", "42");
-			school2.put("school_students", "850");
-			schoolsList.add(school2);
-			
-			// Add third school
-			Map<String, Object> school3 = new HashMap<>();
-			school3.put("schoole_name", "Westlake Academy");
-			school3.put("school_status", true);
-			school3.put("school_state", "TX");
-			school3.put("school_teachers", "28");
-			school3.put("school_students", "320");
-			schoolsList.add(school3);
-			
-			// Add fourth school
-			Map<String, Object> school4 = new HashMap<>();
-			school4.put("schoole_name", "Riverdale Elementary");
-			school4.put("school_status", false);
-			school4.put("school_state", "FL");
-			school4.put("school_teachers", "18");
-			school4.put("school_students", "230");
-			schoolsList.add(school4);
-			
-			// Add fifth school
-			Map<String, Object> school5 = new HashMap<>();
-			school5.put("schoole_name", "Mountain View High");
-			school5.put("school_status", true);
-			school5.put("school_state", "CO");
-			school5.put("school_teachers", "35");
-			school5.put("school_students", "620");
-			schoolsList.add(school5);
-			
-			// Add sixth school
-			Map<String, Object> school6 = new HashMap<>();
-			school6.put("schoole_name", "Sunset Middle School");
-			school6.put("school_status", true);
-			school6.put("school_state", "WA");
-			school6.put("school_teachers", "22");
-			school6.put("school_students", "410");
-			schoolsList.add(school6);
-			
-			// Add the list to context
-			context.put("schools", schoolsList);
 
 
 
