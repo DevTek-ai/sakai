@@ -300,7 +300,6 @@ public class SiteAction extends PagedResourceActionII {
 	/** Name of state attribute for Site instance id */
 	private static final String STATE_SITE_INSTANCE_ID = "site.instance.id";
 
-
 	/** Name of state attribute for Site Information */
 	private static final String STATE_SITE_INFO = "site.info";
 
@@ -5453,29 +5452,22 @@ public class SiteAction extends PagedResourceActionII {
 	 */
 	public void doNew_site(RunData data) throws Exception {
 		SessionState state = ((JetspeedRunData) data)
-			.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-	
-		// Start clean
+				.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+
+		// start clean
 		cleanState(state);
-	
-		// Detect if this is a direct user-triggered action from Worksite Setup UI
-		String cameFromUI = data.getParameters().getString("option");
-	
-		if ("create".equalsIgnoreCase(cameFromUI)) {
-			// User clicked “Create New Site” → jump to custom Edit School view
-			state.setAttribute(STATE_TEMPLATE_INDEX, "13");
-			state.setAttribute(STATE_SITE_TYPE, "project");
-			log.warn("✅ Direct UI action — loading Edit School view (index 13)");
+
+		if (state.getAttribute(STATE_INITIALIZED) == null) {
+			state.setAttribute(STATE_OVERRIDE_TEMPLATE_INDEX, "1");
 		} else {
-			// Default flow (duplication, import, etc.)
-			state.setAttribute(STATE_TEMPLATE_INDEX, "1");
-			log.info("🔁 System or indirect call — following default site wizard");
+			List siteTypes = (List) state.getAttribute(STATE_SITE_TYPES);
+			if (siteTypes != null) 
+			{
+				state.setAttribute(STATE_TEMPLATE_INDEX, "1");
+			} 
 		}
-	
-		state.setAttribute(STATE_INITIALIZED, Boolean.TRUE);
-	}
-	
-	
+
+	} // doNew_site
 
 	/**
 	 * doMenu_site_delete is called when the Site list tool bar Delete button is
