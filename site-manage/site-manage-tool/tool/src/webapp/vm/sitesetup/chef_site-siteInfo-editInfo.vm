@@ -179,7 +179,7 @@
 		<!-- Address -->
 <div class="row mt-3">
   <label for="devtek_address" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.address")
+     $tlang.getString("school.address")
   </label>
   <div class="col-sm-6">
     <input type="text" name="devtek_address" id="devtek_address" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek_address)" class="form-control" />
@@ -189,7 +189,7 @@
 <!-- City -->
 <div class="row mt-3">
   <label for="devtek_city" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.city")
+     $tlang.getString("school.city")
   </label>
   <div class="col-sm-6">
     <input type="text" name="devtek_city" id="devtek_city" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek_city)" class="form-control" />
@@ -199,7 +199,7 @@
 <!-- State -->
 <div class="row mt-3">
   <label for="devtek_state" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.state")
+     $tlang.getString("school.state")
   </label>
 <div class="col-sm-6">
   <select name="devtek_state" id="devtek_state" class="form-control">
@@ -222,7 +222,7 @@
 <!-- Zip Code -->
 <div class="row mt-3">
   <label for="devtek_zipcode" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.zip")
+     $tlang.getString("school.zip")
   </label>
   <div class="col-sm-6">
     <input type="text" name="devtek_zipcode" id="devtek_zipcode" size="40" maxlength="10" value="$!validator.escapeHtml($!devtek_zipcode)" class="form-control" />
