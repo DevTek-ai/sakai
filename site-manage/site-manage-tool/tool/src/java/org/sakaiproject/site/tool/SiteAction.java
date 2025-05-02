@@ -1700,6 +1700,7 @@ public class SiteAction extends PagedResourceActionII {
 			state.setAttribute(STATE_SITES, allSites);
 			context.put("sites", allSites);
 
+
 			if (!isSuperUser) {
 				boolean canDelSoftDel = false;
 				for (Site s : allSites) {
@@ -7138,6 +7139,10 @@ private Map<String, List<MyTool>> getTools(SessionState state, String type, Site
 			}
 				
 			ResourcePropertiesEdit rp = site.getPropertiesEdit();
+			String form_value = params.get("devtek_type");
+            if (StringUtils.isNotBlank(form_value)) {
+                rp.addProperty("devtek-department-type", form_value);
+            }
 
 			// for course sites
 			String siteType = site.getType();

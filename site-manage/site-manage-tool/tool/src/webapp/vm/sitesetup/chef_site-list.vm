@@ -148,36 +148,64 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
-            #foreach($school in $schools)
-            <tr>
-                <td headers="checkbox" class="screenOnly attach">
-                    <input type="checkbox" name="selectedMembers" value="school$foreach.index" id="school$foreach.index" class="siteSelectCheckbox" />
-                    <label class="skip" for="school$foreach.index">Select $!school.get("schoole_name")</label>
-                </td>
-                <td headers="title">
-                    $!school.get("schoole_name")
-                    <div id="dialog_school$foreach.index"></div>
-                </td>
-                <td headers="published">
-                    #if($!school.get("school_status"))
-                        <span class="fa fa-check" aria-label="$tlang.getString("list.publi")"></span>
-                    #else
-                        <span class="fa fa-times" aria-label="$tlang.getString("list.unpub")"></span>
-                    #end
-                </td>
-                <td headers="type" class="d-none d-sm-table-cell">
-                    <span style="display: inline-block; padding: 4px 8px; background-color: #f5f5f5; border-radius: 4px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); font-weight: 500; min-width: 30px; text-align: center;">$!school.get("school_state")</span>
-                </td>
-                <td headers="createdBy" class="d-none d-sm-table-cell">
-                    $!school.get("school_teachers")
-                </td>
-                <td headers="term" class="d-none d-sm-table-cell">
-                    $!school.get("school_students")
-                </td>
-            </tr>
-            #end
-        </tbody>
+				<tbody>
+						#set ($siteCount=0)
+						#foreach ($site in $sites)
+							#set ($siteCount=$siteCount + 1)
+							#set ($properties = $site.getProperties())
+
+								<td headers="checkbox" class="screenOnly attach">
+									#if ($service.allowUpdateSite($site.Id))
+										<input type="checkbox" name="selectedMembers" value="$formattedText.escapeHtml($site.getId())" id="site$siteCount" class="siteSelectCheckbox" />
+										<label class="skip" for="site$siteCount">Select $formattedText.escapeHtml($site.getTitle())</label>
+									#end
+								</td>
+								<td headers="title">
+									#if (!$service.allowAccessSite($site.Id))
+										<label class="unpublishedLabel">$formattedText.escapeHtml($site.getTitle())</label>
+									#else
+										<a href="$site.Url" target="_top">$formattedText.escapeHtml($site.getTitle())</a>
+									#end
+									<div id="dialog_$site.Id"></div>
+									<a href="#" id="$site.Id" class="getSiteDesc" title="$tlang.getString('list.moreinfotooltip')">
+										<img src="#imageLink("sakai/information_gray.png")" border="0" title="$tlang.getString('list.moreinfotooltip')" alt="$tlang.getString('list.moreinfotooltip')" />
+									</a>
+								</td>
+								<td headers="published">
+									#if($site.isPublished())
+										<span class="fa fa-check" aria-label="$tlang.getString("list.publi")"></span>
+									#else
+										<span class="fa fa-times" aria-label="$tlang.getString("list.unpub")"></span>
+									#end
+								</td>
+
+							<td headers="devtek-state" class="d-none d-sm-table-cell">
+								<span style="display: 
+								inline-block; 
+								padding: 4px 8px;
+								 background-color: #f5f5f5; 
+								border-radius: 4px;
+								 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+								 font-weight: 500; 
+								min-width: 30px; 
+								text-align: center;"
+							>
+							#set($term = $properties.getProperty('devtek-state'))
+								#if($term && $term != "")$!term#else--#end
+							</span>
+							</td>
+							<td headers="devtek-students" class="d-none d-sm-table-cell">
+								#set($term = $properties.getProperty('devtek-students'))
+								#if($term && $term != "")$!term#else--#end
+							</td>
+							<td headers="devtek-teachers" class="d-none d-sm-table-cell">
+								#set($term = $properties.getProperty('devtek-teachers'))
+								#if($term && $term != "")$!term#else--#end
+							</td>
+
+							</tr>
+						#end
+					</tbody>
 
     </table>
 </div>
