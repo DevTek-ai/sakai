@@ -300,6 +300,7 @@ public class SiteAction extends PagedResourceActionII {
 	/** Name of state attribute for Site instance id */
 	private static final String STATE_SITE_INSTANCE_ID = "site.instance.id";
 
+
 	/** Name of state attribute for Site Information */
 	private static final String STATE_SITE_INFO = "site.info";
 
@@ -5454,17 +5455,24 @@ public class SiteAction extends PagedResourceActionII {
 		SessionState state = ((JetspeedRunData) data)
 			.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
 	
+		// Start clean
 		cleanState(state);
 	
-		// Set correct template index to show your custom Edit School view
-		state.setAttribute(STATE_TEMPLATE_INDEX, "13");
+		// Detect if this is a direct user-triggered action from Worksite Setup UI
+		String cameFromUI = data.getParameters().getString("option");
 	
-		// Set project site type
-		state.setAttribute(STATE_SITE_TYPE, "project");
+		if ("create".equalsIgnoreCase(cameFromUI)) {
+			// User clicked “Create New Site” → jump to custom Edit School view
+			state.setAttribute(STATE_TEMPLATE_INDEX, "13");
+			state.setAttribute(STATE_SITE_TYPE, "project");
+			log.warn("✅ Direct UI action — loading Edit School view (index 13)");
+		} else {
+			// Default flow (duplication, import, etc.)
+			state.setAttribute(STATE_TEMPLATE_INDEX, "1");
+			log.info("🔁 System or indirect call — following default site wizard");
+		}
 	
 		state.setAttribute(STATE_INITIALIZED, Boolean.TRUE);
-	
-		log.warn("✅ Skipping type chooser and loading Edit School view (index 13)");
 	}
 	
 	
