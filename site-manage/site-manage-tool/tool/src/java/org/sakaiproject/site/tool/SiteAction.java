@@ -5452,22 +5452,22 @@ public class SiteAction extends PagedResourceActionII {
 	 */
 	public void doNew_site(RunData data) throws Exception {
 		SessionState state = ((JetspeedRunData) data)
-				.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-
-		// start clean
+			.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+	
 		cleanState(state);
-
-		if (state.getAttribute(STATE_INITIALIZED) == null) {
-			state.setAttribute(STATE_OVERRIDE_TEMPLATE_INDEX, "1");
-		} else {
-			List siteTypes = (List) state.getAttribute(STATE_SITE_TYPES);
-			if (siteTypes != null) 
-			{
-				state.setAttribute(STATE_TEMPLATE_INDEX, "1");
-			} 
-		}
-
-	} // doNew_site
+	
+		// Set correct template index to show your custom Edit School view
+		state.setAttribute(STATE_TEMPLATE_INDEX, "13");
+	
+		// Set project site type
+		state.setAttribute(STATE_SITE_TYPE, "project");
+	
+		state.setAttribute(STATE_INITIALIZED, Boolean.TRUE);
+	
+		log.warn("✅ Skipping type chooser and loading Edit School view (index 13)");
+	}
+	
+	
 
 	/**
 	 * doMenu_site_delete is called when the Site list tool bar Delete button is
