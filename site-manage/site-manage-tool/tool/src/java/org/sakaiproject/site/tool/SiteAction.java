@@ -1490,7 +1490,7 @@ public class SiteAction extends PagedResourceActionII {
 	 */
 
 	private String buildContextForTemplate(String preIndex, int index, VelocityPortlet portlet,
-			Context context, RunData data, SessionState state) {
+		Context context, RunData data, SessionState state) {
 		String realmId = "";
 		String site_type = "";
 		String sortedBy = "";
@@ -5457,14 +5457,14 @@ public class SiteAction extends PagedResourceActionII {
 		// start clean
 		cleanState(state);
 
-		if (state.getAttribute(STATE_INITIALIZED) == null) {
-			state.setAttribute(STATE_OVERRIDE_TEMPLATE_INDEX, "1");
-		} else {
-			List siteTypes = (List) state.getAttribute(STATE_SITE_TYPES);
-			if (siteTypes != null) 
-			{
-				state.setAttribute(STATE_TEMPLATE_INDEX, "1");
-			} 
+			if (state.getAttribute(STATE_INITIALIZED) == null) {
+				state.setAttribute(STATE_OVERRIDE_TEMPLATE_INDEX, "1");
+			} else {
+				List siteTypes = (List) state.getAttribute(STATE_SITE_TYPES);
+				if (siteTypes != null) 
+				{
+					state.setAttribute(STATE_TEMPLATE_INDEX, "1");
+				}
 		}
 
 	} // doNew_site
@@ -7074,6 +7074,10 @@ private Map<String, List<MyTool>> getTools(SessionState state, String type, Site
 			}
 				
 			ResourcePropertiesEdit rp = site.getPropertiesEdit();
+			String form_value = params.get("devtek_type");
+            if (StringUtils.isNotBlank(form_value)) {
+                rp.addProperty("devtek-department-type", form_value);
+            }
 
 			// for course sites
 			String siteType = site.getType();
