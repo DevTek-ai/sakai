@@ -179,7 +179,7 @@
 									#end
 								</td>
 
-							<td headers="devtek-state" class="d-none d-sm-table-cell">
+							<td headers="devtek-site-state" class="d-none d-sm-table-cell">
 								<span style="display: 
 								inline-block; 
 								padding: 4px 8px;
@@ -190,7 +190,7 @@
 								min-width: 30px; 
 								text-align: center;"
 							>
-							#set($term = $properties.getProperty('devtek-state'))
+							#set($term = $properties.getProperty('devtek-site-state'))
 								#if($term && $term != "")$!term#else--#end
 							</span>
 							</td>
