@@ -7075,6 +7075,11 @@ private Map<String, List<MyTool>> getTools(SessionState state, String type, Site
 				
 			ResourcePropertiesEdit rp = site.getPropertiesEdit();
 
+            String form_value = params.get("devtek_type");
+            if (StringUtils.isNotBlank(form_value)) {
+                rp.addProperty("devtek-department-type", form_value);
+            }
+
 			// for course sites
 			String siteType = site.getType();
 			if (SiteTypeUtil.isCourseSite(siteType)) {
