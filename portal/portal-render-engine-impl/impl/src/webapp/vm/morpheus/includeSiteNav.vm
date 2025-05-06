@@ -80,19 +80,25 @@
     ##end
     #if ($site.pages)
         ## Check if site has pages with type key
-        #set ($hasCoursePages = false)
-        #set ($coursePages = [])
-        #set ($regularPages = [])
+         #set ($hasCoursePages = false)
+         #set ($hasProjectPages = false)
+         #set ($coursePages = [])
+         #set ($projectPages = [])
+         #set ($regularPages = [])
+         #set ($regularPages = [])
         
-        ## Sort pages into course and regular
-        #foreach ($page in $site.pages)
-            #if ($page.type && $page.type.contains("course"))
-                #set ($hasCoursePages = true)
-                #set ($discard = $coursePages.add($page))
-            #else
-                #set ($discard = $regularPages.add($page))
-            #end
+      ## Sort pages into course, project, and regular
+    #foreach ($page in $site.pages)
+        #if ($page.type && $page.type.contains("course"))
+            #set ($hasCoursePages = true)
+            #set ($discard = $coursePages.add($page))
+        #elseif ($page.type && $page.type.contains("project"))
+            #set ($hasProjectPages = true)
+            #set ($discard = $projectPages.add($page))
+        #else
+            #set ($discard = $regularPages.add($page))
         #end
+    #end
         
         ## Display regular pages first
         #foreach ($page in $regularPages)
@@ -150,6 +156,53 @@
                     </ul>
                 </div>
             </li>
+        #end
+        ## If we have project pages, create a collapsible section for them
+        #if ($hasProjectPages)
+        <li class="nav-item project-pages-container">
+            <button class="btn btn-nav w-100 ps-4 d-flex text-start align-items-center new-dropdowns" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#project-pages-${safeSiteId}" 
+                    aria-expanded="false" 
+                    aria-controls="project-pages-${safeSiteId}">
+                <div class="d-flex me-auto rounded-end">
+                    <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                    <span class="me-2">Schools</span>
+                </div>
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+            <div class="collapse" id="project-pages-${safeSiteId}">
+                <ul class="nav flex-column">
+                    #foreach ($page in $projectPages)
+                        <li class="nav-item">
+                                 <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#project-page-${safeSiteId}-${velocityCount}" 
+                        aria-expanded="false" 
+                        aria-controls="project-page-${safeSiteId}-${velocityCount}">
+                    <div class="d-flex me-auto rounded-end">
+                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                        <span class="me-2 project-page-title">${page.title}</span>
+                    </div>
+                   <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="project-page-${safeSiteId}-${velocityCount}">
+                                <ul class="nav flex-column">
+                                    #foreach ($page_s in $page.pages)
+                                        #if ($site.isCurrent)
+                                            #set ($pageUrl = $page_s.resetUrl)
+                                        #else
+                                            #set ($pageUrl = $page_s.url)
+                                        #end
+                                        #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
+                                    #end
+                                </ul>
+                                </div>
+                            </li>
+                    #end
+                </ul>
+            </div>
+        </li>
         #end
     #else
         ## Original code for when site.pages is not available
