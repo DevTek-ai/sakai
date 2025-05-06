@@ -4,320 +4,305 @@
 	#if($menu)#toolbar($menu)#end
 	## header for edit site information page
 	<div class="page-header">
-		<h1>$tlang.getString("school.edit")</h1>
-	</div>
-	<form name="classInformationForm" id="classInformationForm" method="post" action="#toolForm("SiteAction")">
-	## definie form
-	#if(!$existingSite)
-		## adding new site
 		<h3>
-			$tlang.getString("school.info")
+			#if($existingSite) $tlang.getString("school.edit") #else $tlang.getString("school.add") #end 
 		</h3>
-	#end
+	</div>
+
 	#if ($alertMessage)<div class="sak-banner-error">$tlang.getString("sitediinf.alert") $alertMessage</div>#end
-	## adding a new course site
-	#if ($isCourseSite)
-	<table class="listHier lines nolines indnt1" style="width:auto" summary="$tlang.getString("sinfo.rosterlist.summary")" border="0">
-		#if ($!selectedProviderCourse)
-			<tr class="exclude" id="selectedProviderCourse-head"><td colspan="2" style="padding:.4em 0">
-				<h4><span >$tlang.getString("sinfo.youare")</span></h4>
-			</td></tr>
-			#set ($selectedProviderCourse-num=0)
-			#foreach ($item in $!selectedProviderCourseTitles.keySet())
-				<tr>
-					<td style="padding-left:1em">
-					#set ($selectedProviderCourse-num=1)
-					$!selectedProviderCourseTitles.get($item)
-					</td>
-				</tr>
+
+	<form name="classInformationForm" id="classInformationForm" method="post" action="#toolForm("SiteAction")">
+		<fieldset>
+			<legend>
+				#if($existingSite) $tlang.getString("school.edit") #else $tlang.getString("school.info") #end 
+			</legend>
+			
+			#if(!$existingSite)
+				## adding new site
+				<div class="instruction">
+					<span class="reqStarInline">*</span> $tlang.getString("sinfo.means")
+				</div>
 			#end
-			<tr>
-				<td style="height:0;display:none">
-				## do it this way
-					#if ($selectedProviderCourse-num ==0)
-						<script type="text/javascript">document.getElementById('selectedProviderCourse-head').style.display='none'</script>
-				</td>
-			</tr>
-			#end
-		#end
-		#foreach($id in $!providerCourseTitles.keys())
-			<tr>
-				<td style="padding-left:1em">
-					$!providerCourseTitles.get($id)
-				</td>
-			</tr>
-		#end
-		#if ($!cmAuthorizerSections || $!cmRequestedSections || $!manualAddNumber)
-			<tr class="exclude"><td colspan="2" style="padding:.4em 0">
-			<h4><span >$tlang.getString("sinfo.requestedSections")</span></h4>
-			#foreach ($sect in $!cmRequestedSections)
-				<tr>
-					<td style="padding-left:1em">
-						$sect.title $tlang.getString("man.requested")
-					</td>
-				</tr>	
-			#end
-		   #foreach ($sect in $!cmAuthorizerSections)
-		    	<tr>
-					<td style="padding-left:1em">
-						$sect.eid: $sect.title, $sect.categoryDescription (Pending approval by $sect.authorizer)
-					</td>
-				</tr>	
-			#end
-			#if($existingSite)
-				#foreach($id in $!manualCourseList)
-						<tr>
-						<td style="padding-left:1em">
-							$id $tlang.getString("man.requested")
-						</td>
-						</tr>
-				#end
-			#else
-				## for new site
-				#foreach ($k in [0..$manualAddNumber])
-					#set($courseFieldValues = $!fieldValues.get($k))
-					#set($bound = $!form_requiredFields.size())
-					#set($bound = $bound - 1)
-					<tr>
-					<td style="padding-left:1em">
-						#set($courseFieldString="")
-						#foreach ($fieldCount in [0..$!bound])
-							#set($courseFieldString=$courseFieldString.concat($!courseFieldValues.get($fieldCount).getValue()).concat(" "))
+			
+			## adding a new course site
+			#if ($isCourseSite)
+				<table class="table table-striped table-hover table-bordered ms-0" summary="$tlang.getString("sinfo.rosterlist.summary")" border="0">
+					#if ($!selectedProviderCourse)
+						<tr class="exclude" id="selectedProviderCourse-head"><td colspan="2" style="padding:.4em 0">
+							<h4><span >$tlang.getString("sinfo.youare")</span></h4>
+						</td></tr>
+						#set ($selectedProviderCourse-num=0)
+						#foreach ($item in $!selectedProviderCourseTitles.keySet())
+							<tr>
+								<td style="padding-left:1em">
+								#set ($selectedProviderCourse-num=1)
+								$!selectedProviderCourseTitles.get($item)
+								</td>
+							</tr>
 						#end
-						#set($courseFieldString=$courseFieldString.trim())
-						$courseFieldString $tlang.getString("man.requested")
-					</td>
-					</tr>
+						<tr>
+							<td style="height:0;display:none">
+							## do it this way
+								#if ($selectedProviderCourse-num ==0)
+									<script type="text/javascript">document.getElementById('selectedProviderCourse-head').style.display='none'</script>
+							</td>
+						</tr>
+						#end
+					#end
+					#foreach($id in $!providerCourseTitles.keys())
+						<tr>
+							<td style="padding-left:1em">
+								$!providerCourseTitles.get($id)
+							</td>
+						</tr>
+					#end
+					#if ($!cmAuthorizerSections || $!cmRequestedSections || $!manualAddNumber)
+						<tr class="exclude"><td colspan="2" style="padding:.4em 0">
+						<h4><span >$tlang.getString("sinfo.requestedSections")</span></h4>
+						#foreach ($sect in $!cmRequestedSections)
+							<tr>
+								<td style="padding-left:1em">
+									$sect.title $tlang.getString("man.requested")
+								</td>
+							</tr>	
+						#end
+					   #foreach ($sect in $!cmAuthorizerSections)
+							<tr>
+								<td style="padding-left:1em">
+									$sect.eid: $sect.title, $sect.categoryDescription (Pending approval by $sect.authorizer)
+								</td>
+							</tr>	
+						#end
+						#if($existingSite)
+							#foreach($id in $!manualCourseList)
+									<tr>
+									<td style="padding-left:1em">
+										$id $tlang.getString("man.requested")
+									</td>
+									</tr>
+							#end
+						#else
+							## for new site
+							#foreach ($k in [0..$manualAddNumber])
+								#set($courseFieldValues = $!fieldValues.get($k))
+								#set($bound = $!form_requiredFields.size())
+								#set($bound = $bound - 1)
+								<tr>
+								<td style="padding-left:1em">
+									#set($courseFieldString="")
+									#foreach ($fieldCount in [0..$!bound])
+										#set($courseFieldString=$courseFieldString.concat($!courseFieldValues.get($fieldCount).getValue()).concat(" "))
+									#end
+									#set($courseFieldString=$courseFieldString.trim())
+									$courseFieldString $tlang.getString("man.requested")
+								</td>
+								</tr>
+						#end
+						#end
+					#end
+				</table>
 			#end
-			#end
-		#end
-		</table>
-	#end
-	#if (!$!existingSite && $!isProjectSite)
-		## Required information warning ##
-		<p class="instruction">
-			$tlang.getString("sinfo.simplea") <span class ="reqStarInline">*</span> $tlang.getString("sinfo.means")
-		</p>
-	#end
-		## Title ##
-		<div class="row">
-			<label for="title" class="col-sm-2 form-control-label">
-				#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
-					<span class="reqStar">*</span>
-				#end
-				$tlang.getString("schooldiinf.sittit")
-			</label>
-			<div class="col-sm-6">
-				#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
-					<input type="text" name="title" id="title" size="40" maxlength="$!titleMaxLength" value="$formattedText.escapeHtml($!title)" class="form-control" />
-				#else
-					$formattedText.escapeHtml($!title)
-				#end
-			</div>
-		</div>
-		<input type="hidden" name="hasRosterAttached" id="hasRosterAttached" value="$hasRosterAttached" />
-		#if (!$!existingSite)
-			## creating new sites
-			#if ($displaySiteAlias && $!site_alias_assignable)
-				<div class="shorttext">
-		 			<label for="alias_0">
-						$tlang.getString("sinfo.url")
-		 			</label>
-		 				$!form_site_url_base<input type="text" name="alias_0" id="alias_0" maxlength="40" size="20" value="$formattedText.escapeHtml($form_site_alias)" />
-				</div>
-				<input type="hidden" name="alias_count" id="alias_count" value="1" />
-			#else
-				<input type="hidden" name="alias_count" id="alias_count" value="0" />
-			#end
-		#else
-			## editing exist site
-			#set ( $aliasIdx = 0 )
-			#foreach ($siteAlias in $site_aliases)
-				<div class="row">
-		 			#if ( $!site_aliases_editable )
-		 				<label for="alias_$aliasIdx" class="col-sm-2 form-control-label">
-		 					$tlang.getString("sitediinf.editurl")
-		 				</label>
-		 				<div class="col-sm-6">
-		 					$!site_url_base<input type="text" name="alias_$aliasIdx" id="alias_$aliasIdx" maxlength="40" size="20" value="$formattedText.escapeHtml($!siteAlias)" />
-		 				</div>
-		 			#else
-		 				<label for="alias_$aliasIdx" class="col-sm-2 form-control-label">
-		 					$tlang.getString("sinfo.url")
-		 				</label>
-		 				<div class="col-sm-6">
-		 					$!site_url_base$formattedText.escapeHtml($!siteAlias)
-		 					<input type="hidden" name="alias_$aliasIdx" id="alias_$aliasIdx" value="$formattedText.escapeHtml($!siteAlias)" />
-		 				</div>
-		 			#end
-		 			#set ( $aliasIdx = $aliasIdx + 1 )
-				</div>
-			#end
-			#if ( $!site_aliases_editable )
-				<p class="shorttext">
-					<label for="alias_$aliasIdx">
-	 					$tlang.getString("sitediinf.addurl")
-	 				</label>
-	 				$!site_url_base<input type="text" name="alias_$aliasIdx" id="alias_$aliasIdx" maxlength="40" size="20" value="" />
-				</p>
-				#set ( $aliasIdx = $aliasIdx + 1 )
-			#end
-			<input type="hidden" name="alias_count" id="alias_count" value="$aliasIdx" />
-		#end
-		## Term ##
-		#if ($!isCourseSite)
-			<div class="row">
-				<label for="term" class="col-sm-2 form-control-label">
-					$tlang.getString("sitediinf.term")
+			
+			## Title ##
+			<div class="mb-3 row">
+				<label for="title" class="col-sm-2 col-form-label">
+					#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
+						<span class="reqStar">*</span>
+					#end
+					$tlang.getString("schooldiinf.sittit")
 				</label>
-				<div class="col-sm-6">
-					$!selectedTerm
+				<div class="col-sm-4">
+					#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
+						<input type="text" name="title" id="title" size="40" maxlength="$!titleMaxLength" value="$formattedText.escapeHtml($!title)" class="form-control sakai-glow" />
+					#else
+						$formattedText.escapeHtml($!title)
+					#end
+				</div>
+			</div>
+			
+			<input type="hidden" name="hasRosterAttached" id="hasRosterAttached" value="$hasRosterAttached" />
+			
+			#if (!$!existingSite)
+				## creating new sites
+				#if ($displaySiteAlias && $!site_alias_assignable)
+					<div class="mb-3 row">
+						<label for="alias_0" class="col-sm-2 col-form-label">
+							$tlang.getString("sinfo.url")
+						</label>
+						<div class="col-sm-4">
+							$!form_site_url_base<input type="text" name="alias_0" id="alias_0" maxlength="40" size="20" value="$formattedText.escapeHtml($form_site_alias)" class="form-control sakai-glow" />
+						</div>
+					</div>
+					<input type="hidden" name="alias_count" id="alias_count" value="1" />
+				#else
+					<input type="hidden" name="alias_count" id="alias_count" value="0" />
+				#end
+			#else
+				## editing exist site
+				#set ( $aliasIdx = 0 )
+				#foreach ($siteAlias in $site_aliases)
+					<div class="mb-3 row">
+						#if ( $!site_aliases_editable )
+							<label for="alias_$aliasIdx" class="col-sm-2 col-form-label">
+								$tlang.getString("sitediinf.editurl")
+							</label>
+							<div class="col-sm-4">
+								$!site_url_base<input type="text" name="alias_$aliasIdx" id="alias_$aliasIdx" maxlength="40" size="20" value="$formattedText.escapeHtml($!siteAlias)" class="form-control sakai-glow" />
+							</div>
+						#else
+							<label for="alias_$aliasIdx" class="col-sm-2 col-form-label">
+								$tlang.getString("sinfo.url")
+							</label>
+							<div class="col-sm-4">
+								$!site_url_base$formattedText.escapeHtml($!siteAlias)
+								<input type="hidden" name="alias_$aliasIdx" id="alias_$aliasIdx" value="$formattedText.escapeHtml($!siteAlias)" />
+							</div>
+						#end
+						#set ( $aliasIdx = $aliasIdx + 1 )
+					</div>
+				#end
+				#if ( $!site_aliases_editable )
+					<div class="mb-3 row">
+						<label for="alias_$aliasIdx" class="col-sm-2 col-form-label">
+							$tlang.getString("sitediinf.addurl")
+						</label>
+						<div class="col-sm-4">
+							$!site_url_base<input type="text" name="alias_$aliasIdx" id="alias_$aliasIdx" maxlength="40" size="20" value="" class="form-control sakai-glow" />
+						</div>
+					</div>
+					#set ( $aliasIdx = $aliasIdx + 1 )
+				#end
+				<input type="hidden" name="alias_count" id="alias_count" value="$aliasIdx" />
+			#end
+			
+			## Term ##
+			#if ($!isCourseSite)
+				<div class="mb-3 row">
+					<label for="term" class="col-sm-2 col-form-label">
+						$tlang.getString("sitediinf.term")
+					</label>
+					<div class="col-sm-4">
+						$!selectedTerm
+					</div>
+				</div>	
+			#end
+			
+			<!-- Address -->
+			<div class="mb-3 row">
+				<label for="devtek-site-address" class="col-sm-2 col-form-label">
+					<span class="reqStar">*</span> $tlang.getString("school.address")
+				</label>
+				<div class="col-sm-4">
+					<input type="text" name="devtek-site-address" id="devtek-site-address" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-address)" class="form-control sakai-glow" form_requiredFields />
+				</div>
+			</div>
+
+			<!-- City -->
+			<div class="mb-3 row">
+				<label for="devtek-site-city" class="col-sm-2 col-form-label">
+					<span class="reqStar">*</span> $tlang.getString("school.city")
+				</label>
+				<div class="col-sm-4">
+					<input type="text" name="devtek-site-city" id="devtek-site-city" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-city)" class="form-control sakai-glow" form_requiredFields/>
+				</div>
+			</div>
+
+			<!-- Zip Code -->
+			<div class="mb-3 row">
+				<label for="devtek-site-zipcode" class="col-sm-2 col-form-label">
+					<span class="reqStar">*</span> $tlang.getString("school.zip")
+				</label>
+				<div class="col-sm-4">
+					<input type="text" name="devtek-site-zipcode" id="devtek-site-zipcode" size="40" maxlength="10" value="$!validator.escapeHtml($!devtek-site-zipcode)" class="form-control sakai-glow" required/>
+				</div>
+			</div>
+
+			<!-- State -->
+			<div class="mb-3 row">
+				<label for="devtek-site-state" class="col-sm-2 col-form-label">
+					<span class="reqStar">*</span> $tlang.getString("school.state")
+				</label>
+				<div class="col-sm-4">
+					<select name="devtek-site-state" id="devtek-site-state" class="form-control sakai-glow" required="required" aria-required="true">
+						<option value="">-- Select State --</option>
+						<option value="CA" #if($devtek-site-state == "CA") selected="selected" #end>California</option>
+						<option value="NY" #if($devtek-site-state == "NY") selected="selected" #end>New York</option>
+						<option value="TX" #if($devtek-site-state == "TX") selected="selected" #end>Texas</option>
+						<option value="FL" #if($devtek-site-state == "FL") selected="selected" #end>Florida</option>
+						<option value="IL" #if($devtek-site-state == "IL") selected="selected" #end>Illinois</option>
+						<option value="PA" #if($devtek-site-state == "PA") selected="selected" #end>Pennsylvania</option>
+						<option value="OH" #if($devtek-site-state == "OH") selected="selected" #end>Ohio</option>
+						<option value="GA" #if($devtek-site-state == "GA") selected="selected" #end>Georgia</option>
+						<option value="NC" #if($devtek-site-state == "NC") selected="selected" #end>North Carolina</option>
+						<option value="MI" #if($devtek-site-state == "MI") selected="selected" #end>Michigan</option>
+					</select>
+				</div>
+			</div>
+			
+			<!-- Language -->
+			<div class="mb-3 row">
+				<label for="locales" class="col-sm-2 col-form-label">
+					$tlang.getString("sinfo.language")
+				</label>
+				<div class="col-sm-4">
+					<select name="locales" id="locales" class="form-control sakai-glow">
+						<option value="" #if ($locale_string == "")selected="true" #end>$tlang.getString("sinfo.language.defaultUserLanguage")</option>			
+						#foreach($locale in $locales)			
+							<option value="$locale.toString()" #if ($locale.toString() == $locale_string)selected="true" #end>$formattedText.escapeHtml($tlang.getLocaleDisplayName($locale))</option>	
+						#end			
+					</select>
+				</div>
+			</div>
+
+			## Short Description ##
+			<div class="mb-3 row">
+				<label for="short_description" class="col-sm-2 col-form-label">
+					$tlang.getString("sitediinf.shodes") 
+					<span class="textPanelFooter d-block">
+						$tlang.getString("sitediinf.dis2")
+					</span>
+				</label>
+				<div class="col-sm-4">
+					<textarea name="short_description" id="short_description" rows="2" class="form-control sakai-glow" maxlength="80">$validator.escapeHtmlTextarea($!short_description)</textarea>
 				</div>
 			</div>	
-		#end
-		<!-- Address -->
-<div class="row mt-3">
-  <label for="devtek-site-address" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.address")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-address" id="devtek-site-address" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-address)" class="form-control" />
-  </div>
-</div>
-
-<!-- City -->
-<div class="row mt-3">
-  <label for="devtek-site-city" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.city")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-city" id="devtek-site-city" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-city)" class="form-control" />
-  </div>
-</div>
-
-<!-- State -->
-<div class="row mt-3">
-  <label for="devtek-site-state" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.state")
-  </label>
-<div class="col-sm-6">
-  <select name="devtek-site-state" id="devtek-site-state" class="form-control">
-    <option value="">-- Select State --</option>
-    <option value="CA" #if($devtek-site-state == "CA") selected="selected" #end>California</option>
-    <option value="NY" #if($devtek-site-state == "NY") selected="selected" #end>New York</option>
-    <option value="TX" #if($devtek-site-state == "TX") selected="selected" #end>Texas</option>
-    <option value="FL" #if($devtek-site-state == "FL") selected="selected" #end>Florida</option>
-    <option value="IL" #if($devtek-site-state == "IL") selected="selected" #end>Illinois</option>
-    <option value="PA" #if($devtek-site-state == "PA") selected="selected" #end>Pennsylvania</option>
-    <option value="OH" #if($devtek-site-state == "OH") selected="selected" #end>Ohio</option>
-    <option value="GA" #if($devtek-site-state == "GA") selected="selected" #end>Georgia</option>
-    <option value="NC" #if($devtek-site-state == "NC") selected="selected" #end>North Carolina</option>
-    <option value="MI" #if($devtek-site-state == "MI") selected="selected" #end>Michigan</option>
-  </select>
-</div>
-
-</div>
-
-<!-- Zip Code -->
-<div class="row mt-3">
-  <label for="devtek-site-zipcode" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.zip")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-zipcode" id="devtek-site-zipcode" size="40" maxlength="10" value="$!validator.escapeHtml($!devtek-site-zipcode)" class="form-control" />
-  </div>
-</div>
-		## Language ##
-		<div class="row">
-			<label for="language"  class="col-sm-2 form-control-label">
- 				$tlang.getString("sinfo.language")
- 			</label> 
- 			<div class="col-sm-6">
-				<select name="locales" class="indnt2" id="locales" >
-					<option value="" #if ($locale_string == "")selected="true" #end>$tlang.getString("sinfo.language.defaultUserLanguage")</option>			
-					#foreach($locale in $locales)			
-						<option value="$locale.toString()" #if ($locale.toString() == $locale_string)selected="true" #end>$formattedText.escapeHtml($tlang.getLocaleDisplayName($locale))</option>	
-					#end			
-				</select>
-			</div>
-		</div>
-		## Description ##
-		<div class="longtext">
-			<label for="description" class="block">
-				$tlang.getString("sitediinf.des")
-				<span class="textPanelFooter">
-					$tlang.getString("sitediinf.dis")
-				</span>
-			</label>
-			<table border="0" cellpadding="0" cellspacing="0" >
-					<tr>
-						<td>
-							<textarea name="description" id="description" cols="65" rows="30" wrap="virtual">$formattedText.escapeHtmlFormattedTextarea($!description)</textarea>
-							#chef_setupformattedtextarea("description")
-						</td>
-					</tr>
-			</table>		
-		</div>
-		<br/>
-		## Short Description ##
-		<div class="row ">
-			<label for="short_description" class="block col-sm-2 form-control-label">
-				$tlang.getString("sitediinf.shodes") 
-				<span class="textPanelFooter">
-					$tlang.getString("sitediinf.dis2")
-				</span>
-			</label>
-			<div class="col-sm-6">
-				<textarea name="short_description" id="short_description" rows="2" cols="45" maxlength="80">$validator.escapeHtmlTextarea($!short_description)</textarea>
-			</div>
-		</div>	
-		## Skin & Site Icon ##
-		#if($allowSkinChoice && !$!skins.isEmpty())
-			<div class ="row ">
-				<label for="skin" class="col-sm-2 form-control-label">
-					$tlang.getString("sitediinf.app")
-					<span class="textPanelFooter">
-						$tlang.getString("sitediinf.sit")
-					</span>					
+			
+			## Description ##
+			<div class="mb-3 row">
+				<label for="description" class="col-sm-2 col-form-label">
+					$tlang.getString("sitediinf.des")
+					<span class="textPanelFooter d-block">
+						$tlang.getString("sitediinf.dis")
+					</span>
 				</label>
-				<div class="col-sm-6">
-				 <select name="skin" id="skin">
-				  	 #foreach ($s in $skins)
-						  #set($url="")
-						  #set($url=$!s.Url)
-						  <option value="$url" #if ($url == $selectedIcon)selected="selected"#end>$s.Name</option>
-					  #end
-				  </select>
-				</div>
+				<div class="col-sm-4">
+					<table border="0" cellpadding="0" cellspacing="0" >
+						<tr>
+							<td>
+								<textarea name="description" id="description" cols="65" rows="30" wrap="virtual" class="form-control sakai-glow">$formattedText.escapeHtmlFormattedTextarea($!description)</textarea>
+								#chef_setupformattedtextarea("description")
+							</td>
+						</tr>
+					</table>	
+				</div>	
 			</div>
-		#else
-			#if($allowSiteIcon)
-				<div class="row">
-					<label for="iconUrl" class="col-sm-2 form-control-label">
-						$tlang.getString("sitediinf.ico")
-					</label>
-					<div class="col-sm-6">
-						<input type="text" name="iconUrl" id="iconUrl" size="40" maxlength="255" value="$!validator.escapeHtml($!iconUrl)" />
-					</div>
-				</div>
-			#end
-		#end
-		## Contact Name ##
-		<div class="row ">
+			
+	## Contact Name ##
+		<div class="row  d-none">
 			<label for="siteContactName" class="col-sm-2 form-control-label">
                 <span class="reqStar">*</span>
 				$tlang.getString("sitediinf.sitconnam")
 			</label>
-			<div class="col-sm-6">
+			<div class="col-sm-4">
 				<input type="text" name="siteContactName" id="siteContactName" size="20" maxlength="99" value="$!validator.escapeHtml($!form_site_contact_name)" />
 			</div>
 		</div>		
 		## Contact Email ##		
-		<div class="row">
+		<div class="row  d-none">
 			<label for="siteContactEmail" class="col-sm-2 form-control-label">
 				$tlang.getString("sitediinf.sitconema")
 			</label>	
-			<div class="col-sm-6">			
+			<div class="col-sm-4">			
 				<input type="text" name="siteContactEmail" id="siteContactEmail" size="20" maxlength="99" value="$!form_site_contact_email" />
 			</div>
 		</div>
@@ -326,20 +311,23 @@
 				<input type="hidden" name="isMathJaxEnabledForSite" id="isMathJaxEnabledForSite" value="on"/>
 			#end
 		#end
-		<input type="hidden" name="back" value="$!backIndex" />
-		<input type="hidden" name="templateIndex" value="$!templateIndex" />
-		<input type="hidden" name="continue" value="$!continue" />
-		<input type="hidden" name="option" id="option" value="x" />
-		<input type="hidden" name="eventSubmit_doEdit_site_info" value="x" />
-	<div class="act">
-		<input type="submit" accesskey="s" class= "active" name="continue" value="$tlang.getString("sitediinf.con")" 
-				onclick="resetOption('continue', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
-		#if(!$existingSite)
-			## have the back button for creating site wizard
-			<input type="submit" accesskey="b" name="back" value="$tlang.getString('gen.back')" onclick="resetOption('back', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
-		#end
-		<input type="submit" accesskey="x" name="cancel" value="$tlang.getString('sitediinf.can')" onclick="resetOption('cancel', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
-	</div>
-	<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
-</form>
-	</div>
+			<input type="hidden" name="back" value="$!backIndex" />
+			<input type="hidden" name="templateIndex" value="$!templateIndex" />
+			<input type="hidden" name="continue" value="$!continue" />
+			<input type="hidden" name="option" id="option" value="x" />
+			<input type="hidden" name="eventSubmit_doEdit_site_info" value="x" />
+			
+			<div class="act">
+				<input type="submit" accesskey="s" class="active btn btn-primary" name="continue" value="$tlang.getString("sitediinf.con")" 
+					onclick="resetOption('continue', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
+				#if(!$existingSite)
+					## have the back button for creating site wizard
+					<input type="submit" accesskey="b" name="back" value="$tlang.getString('gen.back')" class="btn btn-secondary" 
+						onclick="resetOption('back', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
+				#end
+				<input type="submit" accesskey="x" name="cancel" value="$tlang.getString('sitediinf.can')" class="btn btn-secondary" 
+					onclick="resetOption('cancel', 'classInformationForm'); SPNR.disableControlsAndSpin( this, null );" />
+			</div>
+			<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+		</fieldset>
+</div>
