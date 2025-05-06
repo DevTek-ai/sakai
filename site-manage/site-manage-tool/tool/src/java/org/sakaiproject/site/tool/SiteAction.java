@@ -2378,6 +2378,20 @@ public class SiteAction extends PagedResourceActionII {
                 context.put("site_aliases_editable", aliasesEditable(state, site == null ? null : site.getId()));
                 context.put("site_alias_assignable", aliasAssignmentForNewSitesEnabled(state));
 
+
+                // devtek - assign value for the edit information of the site after creation
+                if (site != null && site.getPropertiesEdit() != null) {
+                    context.put(STATE_SITE_ADDRESS, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ADDRESS)));
+                    context.put(STATE_SITE_ZIPCODE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE)));
+                    context.put(STATE_SITE_STATE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_STATE)));
+                    context.put(STATE_SITE_CITY, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_CITY)));
+                } else {
+                    context.put(STATE_SITE_ADDRESS, "");
+                    context.put(STATE_SITE_ZIPCODE, "");
+                    context.put(STATE_SITE_STATE, "");
+                    context.put(STATE_SITE_CITY, "");
+                }
+
                 // available languages in sakai.properties
                 List locales = getPrefLocales();
                 context.put("locales", locales);
@@ -6612,7 +6626,7 @@ public class SiteAction extends PagedResourceActionII {
         String option = params.getString("option");
 
         String continuePage = params.getString("continue");
-        if (continuePage != null && continuePage.equalsIgnoreCase("4")) {
+        if (continuePage != null && (continuePage.equalsIgnoreCase("4") || continuePage.equalsIgnoreCase("14"))) {
             state.setAttribute(STATE_SITE_ADDRESS, params.getString(STATE_SITE_ADDRESS));
             state.setAttribute(STATE_SITE_CITY, params.getString(STATE_SITE_CITY));
             state.setAttribute(STATE_SITE_STATE, params.getString(STATE_SITE_STATE));
@@ -8242,6 +8256,11 @@ public class SiteAction extends PagedResourceActionII {
         if (contactEmail != null) {
             siteProperties.addProperty(Site.PROP_SITE_CONTACT_EMAIL, contactEmail);
         }
+
+        Site.getPropertiesEdit().addProperty(STATE_SITE_ADDRESS, (String) state.getAttribute(STATE_SITE_ADDRESS, ""));
+        Site.getPropertiesEdit().addProperty(STATE_SITE_CITY, (String) state.getAttribute(STATE_SITE_CITY, ""));
+        Site.getPropertiesEdit().addProperty(STATE_SITE_STATE, (String) state.getAttribute(STATE_SITE_STATE, ""));
+        Site.getPropertiesEdit().addProperty(STATE_SITE_ZIPCODE, (String) state.getAttribute(STATE_SITE_ZIPCODE, ""));
 
         Collection<String> oldAliasIds = getSiteReferenceAliasIds(Site);
         boolean updateSiteRefAliases = aliasesEditable(state, Site.getId());
@@ -15678,5 +15697,13 @@ public class SiteAction extends PagedResourceActionII {
     private String getDateFormat(Date date) {
         String f = userTimeService.shortPreciseLocalizedTimestamp(date.toInstant(), userTimeService.getLocalTimeZone(), comparator_locale);
         return f;
+    }
+
+    public String nullOrEmptyToNewEmptyString(Object input) {
+        if (input == null) {
+            return new String("");
+        }
+        String str = input.toString();
+        return str.isEmpty() ? new String("") : str;
     }
 }
