@@ -82,9 +82,10 @@
         ## Check if site has pages with type key
          #set ($hasCoursePages = false)
          #set ($hasProjectPages = false)
+         #set ($hasAdminPages = false)
          #set ($coursePages = [])
          #set ($projectPages = [])
-         #set ($regularPages = [])
+         #set ($adminPages = [])
          #set ($regularPages = [])
         
       ## Sort pages into course, project, and regular
@@ -95,6 +96,9 @@
         #elseif ($page.type && $page.type.contains("project"))
             #set ($hasProjectPages = true)
             #set ($discard = $projectPages.add($page))
+        #elseif ($page.isPinned)
+            #set ($hasAdminPages = true)
+            #set ($discard = $adminPages.add($page))
         #else
             #set ($discard = $regularPages.add($page))
         #end
@@ -204,6 +208,52 @@
             </div>
         </li>
         #end
+        #if ($hasAdminPages)
+          <li class="nav-item admin-pages-container">
+            <button class="btn btn-nav w-100 ps-4 d-flex text-start align-items-center new-dropdowns" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#admin-pages-${safeSiteId}" 
+                    aria-expanded="false" 
+                    aria-controls="admin-pages-${safeSiteId}">
+                <div class="d-flex me-auto rounded-end">
+                    <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                    <span class="me-2">Other</span>
+                </div>
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+             <div class="collapse" id="admin-pages-${safeSiteId}">
+                    <ul class="nav flex-column">
+                        #foreach ($page in $adminPages)
+                            <li class="nav-item">
+                                 <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#admin-page-${safeSiteId}-${velocityCount}" 
+                        aria-expanded="false" 
+                        aria-controls="admin-page-${safeSiteId}-${velocityCount}">
+                    <div class="d-flex me-auto rounded-end">
+                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                        <span class="me-2 admin-page-title">${page.title}</span>
+                    </div>
+                   <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="admin-page-${safeSiteId}-${velocityCount}">
+                                <ul class="nav flex-column">
+                                    #foreach ($page_s in $page.pages)
+                                        #if ($site.isCurrent)
+                                            #set ($pageUrl = $page_s.resetUrl)
+                                        #else
+                                            #set ($pageUrl = $page_s.url)
+                                        #end
+                                        #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
+                                    #end
+                                </ul>
+                                </div>
+                            </li>
+                        #end
+                    </ul>
+                </div>
+        </li>
+         #end
     #else
         ## Original code for when site.pages is not available
         #foreach ($page in $site.pages)
