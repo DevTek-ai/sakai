@@ -1344,7 +1344,7 @@ public class SiteAction extends PagedResourceActionII {
 
         template = buildContextForTemplate(getPrevVisitedTemplate(state), Integer.valueOf(indexString), portlet, context, data, state);
 
-        log.debug("buildMainPanelContext template={}", template);
+        log.info("buildMainPanelContext template={}", template);
         return template;
 
     } // buildMainPanelContext
@@ -1516,6 +1516,8 @@ public class SiteAction extends PagedResourceActionII {
                 context.put("viewDeleted", SITE_TYPE_DELETED);
                 views.put(SITE_TYPE_ALL, rb.getString("java.allmy"));
                 views.put(SITE_TYPE_MYWORKSPACE, rb.getFormattedMessage("java.sites", rb.getString("java.my")));
+
+
                 for (int sTypeIndex = 0; sTypeIndex < sTypes.size(); sTypeIndex++) {
                     String type = (String) sTypes.get(sTypeIndex);
                     views.put(type, rb.getFormattedMessage("java.sites", type));
@@ -1619,7 +1621,7 @@ public class SiteAction extends PagedResourceActionII {
 
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
-
+                state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
                 List<Site> allSites = prepPage(state);
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
@@ -4962,6 +4964,14 @@ public class SiteAction extends PagedResourceActionII {
             termProp.put(Site.PROP_SITE_TERM, term);
         }
 
+
+        if((boolean) state.getAttribute("IS_DISPLAY_ONLY_SCHOOL")) {
+            if(  termProp  == null)
+                termProp = new HashMap<String, String>();
+            termProp.put(SITE_DEPARTMENT_TYPE, "school");
+        }
+
+
         // if called from the site list page
         if (((String) state.getAttribute(STATE_TEMPLATE_INDEX)).equals("0")) {
             search = StringUtils.trimToNull((String) state
@@ -5088,6 +5098,12 @@ public class SiteAction extends PagedResourceActionII {
             if (term != null && !"".equals(term) && !TERM_OPTION_ALL.equals(term)) {
                 termProp = new HashMap<String, String>();
                 termProp.put(Site.PROP_SITE_TERM, term);
+            }
+
+            if((boolean) state.getAttribute("IS_DISPLAY_ONLY_SCHOOL")) {
+                if(  termProp  == null)
+                    termProp = new HashMap<String, String>();
+                termProp.put(SITE_DEPARTMENT_TYPE, "school");
             }
 
             if (securityService.isSuperUser()) {
