@@ -198,7 +198,8 @@ public class SiteAction extends PagedResourceActionII {
             "-siteInfo-manageParticipants",  // 63
             "-newSite",
             "-siteInfo-manageOverview", // 65
-            "-school-list"
+            "-school-list",
+            "-school-editInfo"
     };
 
     /**
@@ -1622,13 +1623,11 @@ public class SiteAction extends PagedResourceActionII {
 
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
-                state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
-                List<Site> allSites = prepPage(state);
                 if ("true".equals(state.getAttribute("isSchoolSetup"))) {
-                    allSites = allSites.stream()
-                            .filter(site_ -> "school".equals(site_.getProperties().get("devtek-department-type")))
-                            .collect(Collectors.toList());
-                    }
+                    state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
+                }
+                List<Site> allSites = prepPage(state);
+
 
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
@@ -1692,11 +1691,8 @@ public class SiteAction extends PagedResourceActionII {
                     clearNewSiteStateParameters(state);
                 }
 
-                if ("true".equals(state.getAttribute("isSchoolSetup"))) {
-                    return (String) getContext(data).get("template") + TEMPLATE[66];
-                } else {
-                    return (String) getContext(data).get("template") + TEMPLATE[0];
-                }
+                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[66] : TEMPLATE[0]);
+
             case 1:
                 /*
                  * buildContextForTemplate chef_site-type.vm
@@ -1864,6 +1860,11 @@ public class SiteAction extends PagedResourceActionII {
                  */
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 String siteType = (String) state.getAttribute(STATE_SITE_TYPE);
+
+               
+                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
+               
+
                 if (SiteTypeUtil.isCourseSite(siteType)) {
                     context.put("isCourseSite", Boolean.TRUE);
                     context.put("disableCourseSelection", serverConfigurationService.getString("disable.course.site.skin.selection", "false").equals("true") ? Boolean.TRUE : Boolean.FALSE);
@@ -2412,8 +2413,8 @@ public class SiteAction extends PagedResourceActionII {
                 MathJaxEnabler.addMathJaxSettingsToSiteInfoContext(context, site, state);
                 PortalNeochatEnabler.addToSiteInfoContext(context, site, state);
 
-                return (String) getContext(data).get("template") + TEMPLATE[13];
-            case 14:
+                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[67] : TEMPLATE[13]);
+                case 14:
                 /*
                  * buildContextForTemplate chef_site-siteInfo-editInfoConfirm.vm
                  *
@@ -2427,6 +2428,9 @@ public class SiteAction extends PagedResourceActionII {
                 }
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 context.put("displaySiteAlias", Boolean.valueOf(displaySiteAlias()));
+
+                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
+
                 siteType = (String) state.getAttribute(STATE_SITE_TYPE);
                 if (SiteTypeUtil.isCourseSite(siteType)) {
                     context.put("isCourseSite", Boolean.TRUE);

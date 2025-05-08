@@ -11,7 +11,7 @@
 	#if(!$existingSite)
 		## adding new site
 		<h3>
-			$tlang.getString("school.info")
+			$tlang.getString("sinfo.other")
 		</h3>
 	#end
 	#if ($alertMessage)<div class="sak-banner-error">$tlang.getString("sitediinf.alert") $alertMessage</div>#end
@@ -105,11 +105,11 @@
 				#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
 					<span class="reqStar">*</span>
 				#end
-				$tlang.getString("schooldiinf.sittit")
+				$tlang.getString("sitediinf.sittit")
 			</label>
 			<div class="col-sm-6">
 				#if ($siteTitleEditable || (!$!existingSite && !$hasRosterAttached))
-					<input type="text" name="title" id="title" size="40" maxlength="$!titleMaxLength" value="$formattedText.escapeHtml($!title)" class="form-control" />
+					<input type="text" name="title" id="title" size="20" maxlength="$!titleMaxLength" value="$formattedText.escapeHtml($!title)" />
 				#else
 					$formattedText.escapeHtml($!title)
 				#end
@@ -175,58 +175,6 @@
 				</div>
 			</div>	
 		#end
-		<!-- Address -->
-<div class="row mt-3">
-  <label for="devtek-site-address" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.address")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-address" id="devtek-site-address" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-address)" class="form-control" />
-  </div>
-</div>
-
-<!-- City -->
-<div class="row mt-3">
-  <label for="devtek-site-city" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.city")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-city" id="devtek-site-city" size="40" maxlength="255" value="$!validator.escapeHtml($!devtek-site-city)" class="form-control" />
-  </div>
-</div>
-
-<!-- State -->
-<div class="row mt-3">
-  <label for="devtek-site-state" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.state")
-  </label>
-<div class="col-sm-6">
-  <select name="devtek-site-state" id="devtek-site-state" class="form-control">
-    <option value="">-- Select State --</option>
-    <option value="CA" #if($devtek-site-state == "CA") selected="selected" #end>California</option>
-    <option value="NY" #if($devtek-site-state == "NY") selected="selected" #end>New York</option>
-    <option value="TX" #if($devtek-site-state == "TX") selected="selected" #end>Texas</option>
-    <option value="FL" #if($devtek-site-state == "FL") selected="selected" #end>Florida</option>
-    <option value="IL" #if($devtek-site-state == "IL") selected="selected" #end>Illinois</option>
-    <option value="PA" #if($devtek-site-state == "PA") selected="selected" #end>Pennsylvania</option>
-    <option value="OH" #if($devtek-site-state == "OH") selected="selected" #end>Ohio</option>
-    <option value="GA" #if($devtek-site-state == "GA") selected="selected" #end>Georgia</option>
-    <option value="NC" #if($devtek-site-state == "NC") selected="selected" #end>North Carolina</option>
-    <option value="MI" #if($devtek-site-state == "MI") selected="selected" #end>Michigan</option>
-  </select>
-</div>
-
-</div>
-
-<!-- Zip Code -->
-<div class="row mt-3">
-  <label for="devtek-site-zipcode" class="col-sm-2 form-control-label">
-    <span class="reqStar">*</span> $tlang.getString("school.zip")
-  </label>
-  <div class="col-sm-6">
-    <input type="text" name="devtek-site-zipcode" id="devtek-site-zipcode" size="40" maxlength="10" value="$!validator.escapeHtml($!devtek-site-zipcode)" class="form-control" />
-  </div>
-</div>
 		## Language ##
 		<div class="row">
 			<label for="language"  class="col-sm-2 form-control-label">
