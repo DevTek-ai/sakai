@@ -1344,7 +1344,7 @@ public class SiteAction extends PagedResourceActionII {
 
         template = buildContextForTemplate(getPrevVisitedTemplate(state), Integer.valueOf(indexString), portlet, context, data, state);
 
-        log.debug("buildMainPanelContext template={}", template);
+        log.info("buildMainPanelContext template={}", template);
         return template;
 
     } // buildMainPanelContext
@@ -1516,6 +1516,8 @@ public class SiteAction extends PagedResourceActionII {
                 context.put("viewDeleted", SITE_TYPE_DELETED);
                 views.put(SITE_TYPE_ALL, rb.getString("java.allmy"));
                 views.put(SITE_TYPE_MYWORKSPACE, rb.getFormattedMessage("java.sites", rb.getString("java.my")));
+
+
                 for (int sTypeIndex = 0; sTypeIndex < sTypes.size(); sTypeIndex++) {
                     String type = (String) sTypes.get(sTypeIndex);
                     views.put(type, rb.getFormattedMessage("java.sites", type));
@@ -1619,7 +1621,7 @@ public class SiteAction extends PagedResourceActionII {
 
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
-
+                state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
                 List<Site> allSites = prepPage(state);
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
@@ -2381,10 +2383,10 @@ public class SiteAction extends PagedResourceActionII {
 
                 // devtek - assign value for the edit information of the site after creation
                 if (site != null && site.getPropertiesEdit() != null) {
-                    context.put(STATE_SITE_ADDRESS, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ADDRESS)));
-                    context.put(STATE_SITE_ZIPCODE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE)));
-                    context.put(STATE_SITE_STATE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_STATE)));
-                    context.put(STATE_SITE_CITY, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_CITY)));
+                    context.put(STATE_SITE_ADDRESS, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ADDRESS), ""));
+                    context.put(STATE_SITE_ZIPCODE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE), ""));
+                    context.put(STATE_SITE_STATE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_STATE), ""));
+                    context.put(STATE_SITE_CITY, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_CITY), ""));
                 } else {
                     context.put(STATE_SITE_ADDRESS, "");
                     context.put(STATE_SITE_ZIPCODE, "");
@@ -4962,6 +4964,14 @@ public class SiteAction extends PagedResourceActionII {
             termProp.put(Site.PROP_SITE_TERM, term);
         }
 
+
+        if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+            if (termProp == null)
+                termProp = new HashMap<String, String>();
+            termProp.put(SITE_DEPARTMENT_TYPE, "school");
+        }
+
+
         // if called from the site list page
         if (((String) state.getAttribute(STATE_TEMPLATE_INDEX)).equals("0")) {
             search = StringUtils.trimToNull((String) state
@@ -5088,6 +5098,12 @@ public class SiteAction extends PagedResourceActionII {
             if (term != null && !"".equals(term) && !TERM_OPTION_ALL.equals(term)) {
                 termProp = new HashMap<String, String>();
                 termProp.put(Site.PROP_SITE_TERM, term);
+            }
+
+            if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+                if (termProp == null)
+                    termProp = new HashMap<String, String>();
+                termProp.put(SITE_DEPARTMENT_TYPE, "school");
             }
 
             if (securityService.isSuperUser()) {
@@ -15699,11 +15715,16 @@ public class SiteAction extends PagedResourceActionII {
         return f;
     }
 
-    public String nullOrEmptyToNewEmptyString(Object input) {
-        if (input == null) {
-            return new String("");
+    public String getStringAttribute(Object input, String defaultValue) {
+        if (input == null || input.toString().isEmpty()) {
+            return defaultValue;
         }
-        String str = input.toString();
-        return str.isEmpty() ? new String("") : str;
+        return input.toString();
+    }
+
+
+    private boolean getBooleanAttribute(SessionState state, String attributeName, boolean defaultValue) {
+        Object value = state.getAttribute(attributeName);
+        return value != null ? (boolean) value : defaultValue;
     }
 }
