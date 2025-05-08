@@ -2383,10 +2383,10 @@ public class SiteAction extends PagedResourceActionII {
 
                 // devtek - assign value for the edit information of the site after creation
                 if (site != null && site.getPropertiesEdit() != null) {
-                    context.put(STATE_SITE_ADDRESS, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ADDRESS)));
-                    context.put(STATE_SITE_ZIPCODE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE)));
-                    context.put(STATE_SITE_STATE, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_STATE)));
-                    context.put(STATE_SITE_CITY, nullOrEmptyToNewEmptyString(site.getPropertiesEdit().get(STATE_SITE_CITY)));
+                    context.put(STATE_SITE_ADDRESS, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ADDRESS), ""));
+                    context.put(STATE_SITE_ZIPCODE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE), ""));
+                    context.put(STATE_SITE_STATE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_STATE), ""));
+                    context.put(STATE_SITE_CITY, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_CITY), ""));
                 } else {
                     context.put(STATE_SITE_ADDRESS, "");
                     context.put(STATE_SITE_ZIPCODE, "");
@@ -4965,8 +4965,8 @@ public class SiteAction extends PagedResourceActionII {
         }
 
 
-        if((boolean) state.getAttribute("IS_DISPLAY_ONLY_SCHOOL")) {
-            if(  termProp  == null)
+        if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+            if (termProp == null)
                 termProp = new HashMap<String, String>();
             termProp.put(SITE_DEPARTMENT_TYPE, "school");
         }
@@ -5100,8 +5100,8 @@ public class SiteAction extends PagedResourceActionII {
                 termProp.put(Site.PROP_SITE_TERM, term);
             }
 
-            if((boolean) state.getAttribute("IS_DISPLAY_ONLY_SCHOOL")) {
-                if(  termProp  == null)
+            if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+                if (termProp == null)
                     termProp = new HashMap<String, String>();
                 termProp.put(SITE_DEPARTMENT_TYPE, "school");
             }
@@ -15715,11 +15715,16 @@ public class SiteAction extends PagedResourceActionII {
         return f;
     }
 
-    public String nullOrEmptyToNewEmptyString(Object input) {
-        if (input == null) {
-            return new String("");
+    public String getStringAttribute(Object input, String defaultValue) {
+        if (input == null || input.toString().isEmpty()) {
+            return defaultValue;
         }
-        String str = input.toString();
-        return str.isEmpty() ? new String("") : str;
+        return input.toString();
+    }
+
+
+    private boolean getBooleanAttribute(SessionState state, String attributeName, boolean defaultValue) {
+        Object value = state.getAttribute(attributeName);
+        return value != null ? (boolean) value : defaultValue;
     }
 }
