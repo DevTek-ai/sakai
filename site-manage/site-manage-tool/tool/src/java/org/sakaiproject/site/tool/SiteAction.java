@@ -197,7 +197,8 @@ public class SiteAction extends PagedResourceActionII {
             "-uploadArchive",
             "-siteInfo-manageParticipants",  // 63
             "-newSite",
-            "-siteInfo-manageOverview" // 65
+            "-siteInfo-manageOverview", // 65
+            "-school-list"
     };
 
     /**
@@ -1621,6 +1622,12 @@ public class SiteAction extends PagedResourceActionII {
                 context.put("portalUrl", portalUrl);
 
                 List<Site> allSites = prepPage(state);
+                if ("true".equals(state.getAttribute("isSchoolSetup"))) {
+                    allSites = allSites.stream()
+                            .filter(site_ -> "school".equals(site_.getProperties().get("devtek-department-type")))
+                            .collect(Collectors.toList());
+                    }
+
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
 
@@ -1683,8 +1690,11 @@ public class SiteAction extends PagedResourceActionII {
                     clearNewSiteStateParameters(state);
                 }
 
-
-                return (String) getContext(data).get("template") + TEMPLATE[0];
+                if ("true".equals(state.getAttribute("isSchoolSetup"))) {
+                    return (String) getContext(data).get("template") + TEMPLATE[66];
+                } else {
+                    return (String) getContext(data).get("template") + TEMPLATE[0];
+                }
             case 1:
                 /*
                  * buildContextForTemplate chef_site-type.vm
@@ -8410,12 +8420,15 @@ public class SiteAction extends PagedResourceActionII {
 
         state.setAttribute(STATE_ACTION, "SiteAction");
         setupFormNamesAndConstants(state);
+        PortletConfig config = portlet.getPortletConfig();
+        String isSchoolSetup = StringUtils.trimToEmpty(config.getInitParameter("isSchoolSetup"));
+        state.setAttribute("isSchoolSetup", isSchoolSetup);
 
         if (state.getAttribute(STATE_PAGESIZE_SITEINFO) == null) {
             state.setAttribute(STATE_PAGESIZE_SITEINFO, new Hashtable());
         }
         if (state.getAttribute(STATE_SITE_TYPES) == null) {
-            PortletConfig config = portlet.getPortletConfig();
+//            PortletConfig config = portlet.getPortletConfig();
 
             // all site types (SITE_DEFAULT_LIST overrides tool config)
             String t = StringUtils.trimToNull(SITE_DEFAULT_LIST);
