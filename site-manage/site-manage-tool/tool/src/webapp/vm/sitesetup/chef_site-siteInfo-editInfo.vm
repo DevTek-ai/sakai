@@ -259,7 +259,7 @@
 				<label for="short_description" class="col-sm-2 col-form-label">
 					$tlang.getString("sitediinf.shodes") 
 					<span class="textPanelFooter d-block">
-						$tlang.getString("sitediinf.dis2")
+						$tlang.getString("schooldiinf.dis2")
 					</span>
 				</label>
 				<div class="col-sm-4">
@@ -272,7 +272,7 @@
 				<label for="description" class="col-sm-2 col-form-label">
 					$tlang.getString("sitediinf.des")
 					<span class="textPanelFooter d-block">
-						$tlang.getString("sitediinf.dis")
+						$tlang.getString("schooldiinf.dis")
 					</span>
 				</label>
 				<div class="col-sm-4">
