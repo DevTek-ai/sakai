@@ -761,6 +761,7 @@ public class SiteHandler extends WorksiteHandler
 			rcontext.put("siteNavLoggedIn", Boolean.valueOf(loggedIn));
 			rcontext.put("currentSiteId", siteId);
 			rcontext.put("sidebarSites", portal.getSiteHelper().getContextSitesWithPages(req, siteId, null, loggedIn));
+			rcontext.put("out", System.out);
 
 			try
 			{

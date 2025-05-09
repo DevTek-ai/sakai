@@ -90,10 +90,11 @@
         
       ## Sort pages into course, project, and regular
     #foreach ($page in $site.pages)
+
         #if ($page.type && $page.type.contains("course"))
             #set ($hasCoursePages = true)
             #set ($discard = $coursePages.add($page))
-        #elseif ($page.type && $page.type.contains("project"))
+        #elseif ($page.type && $page.type.contains("project") && $page.properties.get('devtek-department-type') == 'school')
             #set ($hasProjectPages = true)
             #set ($discard = $projectPages.add($page))
         #elseif ($page.isPinned)
