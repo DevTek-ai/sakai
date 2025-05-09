@@ -173,18 +173,19 @@ public class MenuBuilder {
             Context context, ResourceLoader rl) {
         Menu menu = new MenuImpl(portlet, data, (String) state.getAttribute(SiteAction.STATE_ACTION));
 
+        String siteType = (String) state.getAttribute("deptType");
         // Site List
         menu.add(buildMenuEntry(
-                rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.schoolList"
-                        : ("true".equals(state.getAttribute("isDeptSetup")) ? "java.deptList" : "java.siteList")),
+                rl.getString("school".equals(siteType) ? "java.schoolList"
+                        : ("department".equals(siteType) ? "java.deptList" : "java.siteList")),
                 "",
                 true));
         // SAK-22438 if user can add one of these site types then they can see the link
         // to add a new site
         if (SS.allowAddCourseSite() || SS.allowAddProjectSite()) {
             menu.add(buildMenuEntry(
-                    rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.newSchool"
-                            : ("true".equals(state.getAttribute("isDeptSetup")) ? "java.newDept" : "java.new")),
+                    rl.getString("school".equals(siteType) ? "java.newSchool"
+                            : ("department".equals(siteType) ? "java.newDept" : "java.new")),
                     "doNew_site",
                     false));
         }

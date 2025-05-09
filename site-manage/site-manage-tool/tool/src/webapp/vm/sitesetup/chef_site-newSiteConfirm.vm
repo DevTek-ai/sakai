@@ -60,7 +60,7 @@
 	#end
 	<form name="addSiteForm" action="#toolForm("$action")" method="post">
 		<input type="hidden" name="eventSubmit_doAdd_site_option" value="x" />
-		#if ($isSchoolSetup)
+		#if ($deptType == "school")
 			<input type="hidden" name="devtek-department-type" value="school" />
 		#end
 		<input type="hidden" name="option" value="cancel" />
