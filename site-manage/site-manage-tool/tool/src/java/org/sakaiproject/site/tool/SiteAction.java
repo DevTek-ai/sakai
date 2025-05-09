@@ -1638,6 +1638,25 @@ public class SiteAction extends PagedResourceActionII {
                 }
                 List<Site> allSites = prepPage(state);
 
+                for (Site _site : allSites) {
+                    String userId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-admin"), "") ;
+                    if (userId != null && !userId.isEmpty()) {
+                        try {
+                            _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getFirstName() + " " + userDirectoryService.getUser(userId).getLastName(),""));
+                        } catch (Exception e) {
+                            // _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getDisplayName(),""));
+                        }
+                    }
+                    String siteId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-parent"), "") ;
+                    if (siteId != null && !siteId.isEmpty()) {
+                        try {
+                            _site.getPropertiesEdit().addProperty("parentTitle", getStringAttribute(siteService.getSite(siteId).getTitle(),""));
+                        } catch (Exception e) {
+                            // _site.getPropertiesEdit().addProperty("parentTitle", "");
+                        }
+                    }
+                }
+
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
 

@@ -116,7 +116,7 @@
                 </th>
                 <th id="type" scope="col" class="d-none d-sm-table-cell" width="auto">
                     <a href="#toolLinkParam("SiteAction" "doSort_sites" "criterion=$formattedText.escapeUrl($sortby_type)")" title="$tlang.getString('list.sortbytype')">
-                        Admin Department
+                        Department Admin
                         #if ($currentSortedBy.equals($sortby_type))
                             #if ($currentSortAsc.equals("true"))
                                 <img src="#imageLink("sakai/sortascending.gif")" border="0" title="$tlang.getString('list.styasc')" alt="$tlang.getString('list.styasc')" />
@@ -152,14 +152,19 @@
 									</a>
 								</td>
 								<td headers="published">
-								#set($term = $properties.getProperty('devtek-state'))
-								#if($term && $term != "")$!term#else--#end
-								</td>
+									#set($term_ = $properties.getProperty('parentTitle'))
+									#if($term_ && $term_ != "")
+										$!term_
+									#else
+								     #set($term_ = "")
+							          --
+						            #end</td>
 
-							<td headers="devtek-state" class="d-none d-sm-table-cell">
+							<td headers="devtek-state" class="d-sm-table-cell">
 							<span>
-								#set($term = $properties.getProperty('devtek-state'))
-								#if($term && $term != "")$!term#else--#end
+								#set($term = $properties.getProperty('userName'))
+								#if($term && $term != "")$!term#else#set($term = "")
+							          --#end
 							</span>
 							</td>
 
