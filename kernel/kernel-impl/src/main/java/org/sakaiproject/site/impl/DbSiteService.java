@@ -1202,7 +1202,7 @@ public abstract class DbSiteService extends BaseSiteService
 		@SuppressWarnings("unchecked")
 		public List getSites(SelectionType type, Object ofType, String criteria, Map propertyCriteria,  List excludedSites, SortType sort, PagingPosition page, boolean requireDescription, String userId)
 		{
-			userId = getCurrentUserIdIfNull(userId);
+   			userId = getCurrentUserIdIfNull(userId);
 			List<String> siteIds = getSiteIds(type, ofType, criteria, propertyCriteria, excludedSites, sort, page, userId);
 			LinkedHashMap<String, Site> siteMap = getOrderedSiteMap(siteIds, requireDescription);
 

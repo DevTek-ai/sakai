@@ -170,12 +170,15 @@ public class MenuBuilder
         Menu menu = new MenuImpl( portlet, data, (String) state.getAttribute( SiteAction.STATE_ACTION ) );
 
         // Site List
-        menu.add( buildMenuEntry( rl.getString( "java.siteList" ), "", true ) );
-
+        menu.add(buildMenuEntry(
+            rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.schoolList" : "java.siteList"),
+            "",
+            true
+        ));
         // SAK-22438 if user can add one of these site types then they can see the link to add a new site
         if( SS.allowAddCourseSite() || SS.allowAddProjectSite() )
         {
-            menu.add( buildMenuEntry( rl.getString( "java.new" ), "doNew_site", false ) );
+            menu.add( buildMenuEntry( rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.newSchool" : "java.new"), "doNew_site", false ) );
         }
 
         // Add the menu to the context if it's not empty
