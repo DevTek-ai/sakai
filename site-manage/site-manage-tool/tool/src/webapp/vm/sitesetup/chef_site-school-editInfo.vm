@@ -14,7 +14,7 @@
 	<form name="classInformationForm" id="classInformationForm" method="post" action="#toolForm("SiteAction")">
 		<fieldset>
 			<legend>
-				#if($existingSite) $tlang.getString("school.edit") #else $tlang.getString("school.info") #end 
+				$tlang.getString("school.info") 
 			</legend>
 			
 			#if(!$existingSite)
