@@ -127,10 +127,11 @@
 					Parent Department
 				</label>
 				<div class="col-sm-4">
-					<select name="locales" id="locales" class="form-control sakai-glow">
-						<option value="" #if ($locale_string == "")selected="true" #end>$tlang.getString("sinfo.language.defaultUserLanguage")</option>
-						#foreach($locale in $locales)
-							<option value="$locale.toString()" #if ($locale.toString() == $locale_string)selected="true" #end>$formattedText.escapeHtml($tlang.getLocaleDisplayName($locale))</option>
+					<input type="hidden" name="new_name" id="new_name" size="40" maxlength="10" value="devtek-site-parent" class="form-control"/>
+					<select name="new_value" id="new_value" class="form-control sakai-glow">
+						<option value="" #if ($devtek-site-parent == "")selected="true" #end>Select Department</option>
+						#foreach($site in $allsites)
+							<option value="$site.Id" #if ($site.Id == $devtek-site-parent)selected="true" #end>$formattedText.escapeHtml($site.Title)</option>
 						#end
 					</select>
 				</div>
@@ -142,11 +143,12 @@
 					Department Admin
 				</label>
 				<div class="col-sm-4">
-					<select name="locales" id="locales" class="form-control sakai-glow">
-						<option value="" #if ($locale_string == "")selected="true" #end>$tlang.getString("sinfo.language.defaultUserLanguage")</option>
-						#foreach($locale in $locales)
-							<option value="$locale.toString()" #if ($locale.toString() == $locale_string)selected="true" #end>$formattedText.escapeHtml($tlang.getLocaleDisplayName($locale))</option>
-						#end
+					<input type="hidden" name="new_name" id="new_name" size="40" maxlength="10" value="devtek-site-admin" class="form-control"/>
+
+					<select name="new_value" id="new_value" class="form-control sakai-glow">
+						<option value="" #if ($devtek-site-admin == "")selected="true" #end>Select Admin</option>
+						#foreach($user in $allusers)
+							<option value="$user.id" #if ($user.Id == $devtek-site-admin)selected="true" #end>$formattedText.escapeHtml($user.firstName)</option>						#end
 					</select>
 				</div>
 			</div>
@@ -185,6 +187,10 @@
 			<input type="hidden" name="continue" value="$!continue" />
 			<input type="hidden" name="option" id="option" value="x" />
 			<input type="hidden" name="eventSubmit_doEdit_site_info" value="x" />
+			<input type="hidden" name="new_name" id="new_name" size="40" maxlength="10" value="devtek-department-type" class="form-control"/>
+            <input type="hidden" name="new_value" id="new_value" size="40" maxlength="10" value="department" class="form-control sakai-glow"/>
+			<input type="hidden" name="new_name" id="new_name" size="40" maxlength="10" value="devtek-school-id" class="form-control"/>
+            <input type="hidden" name="new_value" id="new_value" size="40" maxlength="10" value="$devtek-school-id" class="form-control sakai-glow"/>
 			
 			<div class="act">
 				<input type="submit" accesskey="s" class="active btn btn-primary" name="continue" value="$tlang.getString("sitediinf.con")" 

@@ -426,6 +426,9 @@ public class SiteAction extends PagedResourceActionII {
     private static final String STATE_SITE_STATE = "devtek-site-state";
     private static final String STATE_SITE_ZIPCODE = "devtek-site-zipcode";
 
+    private static final String STATE_SITE_DEPT_PARENT = "devtek-site-parent";
+    private static final String STATE_SITE_DEPT_ADMIN = "devtek-site-admin";
+
     public static final String SITE_DEPARTMENT_TYPE = "devtek-department-type";
     public static final String IS_DISPLAY_ONLY_SCHOOL = "IS_DISPLAY_ONLY_SCHOOL";
     public static final String DEVTEK_DEPARTMENT_SCHOOL = "school";
@@ -2297,6 +2300,16 @@ public class SiteAction extends PagedResourceActionII {
 
                 boolean displaySiteAlias = displaySiteAlias();
                 context.put("displaySiteAlias", Boolean.valueOf(displaySiteAlias));
+
+                //Siraj Added code for users
+
+                List<User> allUsers = userDirectoryService.getUsers();
+                context.put("allusers", allUsers);
+                List<Site> SitesForDropdown = siteService.getSites(SelectionType.MEMBER, null, null, null, SortType.TITLE_ASC, null);
+                context.put("allsites", SitesForDropdown);
+                String schoolId =  getStringAttribute(userDirectoryService.getCurrentUser().getProperties().get("devtek-school-id"),"");
+                context.put("devtek-school-id",schoolId);
+
                 if (displaySiteAlias) {
                     context.put(FORM_SITE_URL_BASE, getSiteBaseUrl());
                     context.put(FORM_SITE_ALIAS, siteInfo.getFirstAlias());
@@ -2406,16 +2419,21 @@ public class SiteAction extends PagedResourceActionII {
                     context.put(STATE_SITE_ZIPCODE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE), ""));
                     context.put(STATE_SITE_STATE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_STATE), ""));
                     context.put(STATE_SITE_CITY, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_CITY), ""));
+                    context.put(STATE_SITE_DEPT_PARENT, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_PARENT), ""));
+                    context.put(STATE_SITE_DEPT_ADMIN, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_ADMIN), ""));
                 } else {
                     context.put(STATE_SITE_ADDRESS, "");
                     context.put(STATE_SITE_ZIPCODE, "");
                     context.put(STATE_SITE_STATE, "");
                     context.put(STATE_SITE_CITY, "");
+                    context.put(STATE_SITE_DEPT_PARENT, "");
+                    context.put(STATE_SITE_DEPT_ADMIN, "");
                 }
 
                 // available languages in sakai.properties
                 List locales = getPrefLocales();
                 context.put("locales", locales);
+
 
                 // SAK-22384 mathjax support
                 MathJaxEnabler.addMathJaxSettingsToSiteInfoContext(context, site, state);
