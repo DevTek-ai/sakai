@@ -44,36 +44,34 @@ import org.sakaiproject.util.ResourceLoader;
  * 
  * @author bjones86
  */
-public class MenuBuilder
-{
+public class MenuBuilder {
     // APIs
-    private static final SiteService SS = (SiteService) ComponentManager.get( SiteService.class );
-    private static final ToolManager TM = (ToolManager) ComponentManager.get( ToolManager.class );
+    private static final SiteService SS = (SiteService) ComponentManager.get(SiteService.class);
+    private static final ToolManager TM = (ToolManager) ComponentManager.get(ToolManager.class);
 
     // sakai.properties
-    private static final String     SAK_PROP_SITE_SETUP_IMPORT_FILE                 = "site.setup.import.file";
-    private static final boolean    SAK_PROP_SITE_SETUP_IMPORT_FILE_DEFAULT         = true;
+    private static final String SAK_PROP_SITE_SETUP_IMPORT_FILE = "site.setup.import.file";
+    private static final boolean SAK_PROP_SITE_SETUP_IMPORT_FILE_DEFAULT = true;
 
-    private static final String     SAK_PROP_DISPLAY_USER_AUDIT_LOG                 = "user_audit_log_display";
-    private static final boolean    SAK_PROP_DISPLAY_USER_AUDIT_LOG_DEFAULT         = true;
+    private static final String SAK_PROP_DISPLAY_USER_AUDIT_LOG = "user_audit_log_display";
+    private static final boolean SAK_PROP_DISPLAY_USER_AUDIT_LOG_DEFAULT = true;
 
-    private static final String     SAK_PROP_CLEAN_IMPORT_SITE                      = "clean.import.site";
-    private static final boolean    SAK_PROP_CLEAN_IMPORT_SITE_DEFAULT              = true;
+    private static final String SAK_PROP_CLEAN_IMPORT_SITE = "clean.import.site";
+    private static final boolean SAK_PROP_CLEAN_IMPORT_SITE_DEFAULT = true;
 
-    private static final String     SAK_PROP_ALLOW_DUPLICATE_SITE                   = "site.setup.allowDuplicateSite";
-    private static final boolean    SAK_PROP_ALLOW_DUPLICATE_SITE_DEFAULT           = false;
+    private static final String SAK_PROP_ALLOW_DUPLICATE_SITE = "site.setup.allowDuplicateSite";
+    private static final boolean SAK_PROP_ALLOW_DUPLICATE_SITE_DEFAULT = false;
 
-    private static final String     SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER           = "site.setup.allow.editRoster";
-    private static final boolean    SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER_DEFAULT   = true;
-    
-    private static final String     SAK_PROP_CM_IMPLEMENTED                         = "site-manage.courseManagementSystemImplemented";
-    private static final boolean    SAK_PROP_CM_IMPLEMENTED_DEFAULT                 = true;
+    private static final String SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER = "site.setup.allow.editRoster";
+    private static final boolean SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER_DEFAULT = true;
+
+    private static final String SAK_PROP_CM_IMPLEMENTED = "site-manage.courseManagementSystemImplemented";
+    private static final boolean SAK_PROP_CM_IMPLEMENTED_DEFAULT = true;
 
     /**
      * Enumerate the possible choices in the Site Info menu bar.
      */
-    public enum SiteInfoActiveTab
-    {
+    public enum SiteInfoActiveTab {
         SITE_INFO,
         EDIT_SITE_INFO,
         MANAGE_TOOLS,
@@ -94,8 +92,7 @@ public class MenuBuilder
     /**
      * Enumerate the possible choices in the Membership menu bar
      */
-    public enum MembershipActiveTab
-    {
+    public enum MembershipActiveTab {
         CURRENT_SITES,
         OFFICIAL_ENROLMENTS,
         JOINABLE_SITES
@@ -103,7 +100,8 @@ public class MenuBuilder
 
     /**
      * Build the menu items for Membership.
-     * If the menu contains entries at the end of the routine, it will be added to the context under the parameter named "menu".
+     * If the menu contains entries at the end of the routine, it will be added to
+     * the context under the parameter named "menu".
      * 
      * @param portlet
      * @param data
@@ -112,30 +110,34 @@ public class MenuBuilder
      * @param rl
      * @param activeTab
      */
-    public static void buildMenuForMembership( VelocityPortlet portlet, RunData data, SessionState state, Context context, ResourceLoader rl, MembershipActiveTab activeTab )
-    {
-        Menu menu = new MenuImpl( portlet, data, (String) state.getAttribute( SiteAction.STATE_ACTION ) );
+    public static void buildMenuForMembership(VelocityPortlet portlet, RunData data, SessionState state,
+            Context context, ResourceLoader rl, MembershipActiveTab activeTab) {
+        Menu menu = new MenuImpl(portlet, data, (String) state.getAttribute(SiteAction.STATE_ACTION));
 
         // Current sites
-        menu.add( buildMenuEntry( rl.getString( "mb.cursit" ), "doGoto_unjoinable", activeTab.equals( MembershipActiveTab.CURRENT_SITES ) ) );
+        menu.add(buildMenuEntry(rl.getString("mb.cursit"), "doGoto_unjoinable",
+                activeTab.equals(MembershipActiveTab.CURRENT_SITES)));
 
         // Official course enrolments
-        boolean courseManagementEnabled = ServerConfigurationService.getBoolean( SAK_PROP_CM_IMPLEMENTED, SAK_PROP_CM_IMPLEMENTED_DEFAULT );
-        if (courseManagementEnabled)
-        {
-            menu.add( buildMenuEntry( rl.getString( "mb.enrolments"), "doGoto_enrolments", activeTab.equals( MembershipActiveTab.OFFICIAL_ENROLMENTS ) ) );
+        boolean courseManagementEnabled = ServerConfigurationService.getBoolean(SAK_PROP_CM_IMPLEMENTED,
+                SAK_PROP_CM_IMPLEMENTED_DEFAULT);
+        if (courseManagementEnabled) {
+            menu.add(buildMenuEntry(rl.getString("mb.enrolments"), "doGoto_enrolments",
+                    activeTab.equals(MembershipActiveTab.OFFICIAL_ENROLMENTS)));
         }
 
         // Joinable sites
-        menu.add( buildMenuEntry( rl.getString( "mb.joisit" ), "doGoto_joinable", activeTab.equals( MembershipActiveTab.JOINABLE_SITES ) ) );
+        menu.add(buildMenuEntry(rl.getString("mb.joisit"), "doGoto_joinable",
+                activeTab.equals(MembershipActiveTab.JOINABLE_SITES)));
 
         // Add the menu to the context if it's not empty
-        addMenuToContext( menu, context );
+        addMenuToContext(menu, context);
     }
 
     /**
      * Build the menu items for Site Browser.
-     * No active tab support here, as there is only ever one tab which is never active ("Search").
+     * No active tab support here, as there is only ever one tab which is never
+     * active ("Search").
      * 
      * @param portlet
      * @param data
@@ -144,20 +146,22 @@ public class MenuBuilder
      * @param rl
      * @return
      */
-    public static Menu buildMenuForSiteBrowser( VelocityPortlet portlet, RunData data, SessionState state, Context context, ResourceLoader rl )
-    {
-        Menu menu = new MenuImpl( portlet, data, (String) state.getAttribute( SiteAction.STATE_ACTION ) );
+    public static Menu buildMenuForSiteBrowser(VelocityPortlet portlet, RunData data, SessionState state,
+            Context context, ResourceLoader rl) {
+        Menu menu = new MenuImpl(portlet, data, (String) state.getAttribute(SiteAction.STATE_ACTION));
 
         // Search
-        menu.add( buildMenuEntry( rl.getString( "list.search" ), "doShow_simple_search", false) );
+        menu.add(buildMenuEntry(rl.getString("list.search"), "doShow_simple_search", false));
 
         return menu;
     }
 
     /**
      * Build the menu items for Worksite Setup, taking into account permissions.
-     * No active tab support here, as there is only ever one tab which is never active ("New").
-     * If the menu contains entries at the end of the routine, it will be added to the context under the parameter named "menu".
+     * No active tab support here, as there is only ever one tab which is never
+     * active ("New").
+     * If the menu contains entries at the end of the routine, it will be added to
+     * the context under the parameter named "menu".
      * 
      * @param portlet
      * @param data
@@ -165,29 +169,36 @@ public class MenuBuilder
      * @param context
      * @param rl
      */
-    public static void buildMenuForWorksiteSetup( VelocityPortlet portlet, RunData data, SessionState state, Context context, ResourceLoader rl )
-    {
-        Menu menu = new MenuImpl( portlet, data, (String) state.getAttribute( SiteAction.STATE_ACTION ) );
+    public static void buildMenuForWorksiteSetup(VelocityPortlet portlet, RunData data, SessionState state,
+            Context context, ResourceLoader rl) {
+        Menu menu = new MenuImpl(portlet, data, (String) state.getAttribute(SiteAction.STATE_ACTION));
 
+        String siteType = (String) state.getAttribute("deptType");
         // Site List
         menu.add(buildMenuEntry(
-            rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.schoolList" : "java.siteList"),
-            "",
-            true
-        ));
-        // SAK-22438 if user can add one of these site types then they can see the link to add a new site
-        if( SS.allowAddCourseSite() || SS.allowAddProjectSite() )
-        {
-            menu.add( buildMenuEntry( rl.getString("true".equals(state.getAttribute("isSchoolSetup")) ? "java.newSchool" : "java.new"), "doNew_site", false ) );
+                rl.getString("school".equals(siteType) ? "java.schoolList"
+                        : ("department".equals(siteType) ? "java.deptList" : "java.siteList")),
+                "",
+                true));
+        // SAK-22438 if user can add one of these site types then they can see the link
+        // to add a new site
+        if (SS.allowAddCourseSite() || SS.allowAddProjectSite()) {
+            menu.add(buildMenuEntry(
+                    rl.getString("school".equals(siteType) ? "java.newSchool"
+                            : ("department".equals(siteType) ? "java.newDept" : "java.new")),
+                    "doNew_site",
+                    false));
         }
 
         // Add the menu to the context if it's not empty
-        addMenuToContext( menu, context );
+        addMenuToContext(menu, context);
     }
 
     /**
-     * Build the menu items for the given SiteInfoActiveTab, taking into account sakai.properties and permissions.
-     * If the menu contains entries at the end of the routine, it will be added to the context under the parameter named "menu".
+     * Build the menu items for the given SiteInfoActiveTab, taking into account
+     * sakai.properties and permissions.
+     * If the menu contains entries at the end of the routine, it will be added to
+     * the context under the parameter named "menu".
      * 
      * @param portlet
      * @param data
@@ -198,152 +209,160 @@ public class MenuBuilder
      * @param siteTypeProvider
      * @param activeTab
      */
-    public static void buildMenuForSiteInfo( VelocityPortlet portlet, RunData data, SessionState state, Context context, Site site, ResourceLoader rl,
-                                                        SiteTypeProvider siteTypeProvider, SiteInfoActiveTab activeTab )
-    {
+    public static void buildMenuForSiteInfo(VelocityPortlet portlet, RunData data, SessionState state, Context context,
+            Site site, ResourceLoader rl,
+            SiteTypeProvider siteTypeProvider, SiteInfoActiveTab activeTab) {
         // Get any necessary info from the site
         ResourceProperties siteProperties = site.getProperties();
         String siteType = site.getType();
         String siteID = site.getId();
 
         // Permissions checks
-        boolean isMyWorkspace = SiteAction.isSiteMyWorkspace( site );
-        boolean allowUpdateSite = SS.allowUpdateSite( siteID );
-        boolean allowViewRoster = SS.allowViewRoster( siteID );
-        boolean allowUpdateSiteMembership = SS.allowUpdateSiteMembership( siteID );
-        boolean allowUpdateGroupMembership = SS.allowUpdateGroupMembership( siteID );
+        boolean isMyWorkspace = SiteAction.isSiteMyWorkspace(site);
+        boolean allowUpdateSite = SS.allowUpdateSite(siteID);
+        boolean allowViewRoster = SS.allowViewRoster(siteID);
+        boolean allowUpdateSiteMembership = SS.allowUpdateSiteMembership(siteID);
+        boolean allowUpdateGroupMembership = SS.allowUpdateGroupMembership(siteID);
 
         // Build the Menu object
-        Menu menu = new MenuImpl( portlet, data, (String) state.getAttribute( SiteAction.STATE_ACTION ) );
+        Menu menu = new MenuImpl(portlet, data, (String) state.getAttribute(SiteAction.STATE_ACTION));
 
-        if( !isMyWorkspace )
-        {
+        if (!isMyWorkspace) {
             // Main landing page, 'Site Information'
-            menu.add( buildMenuEntry( rl.getString( "sinfo.other" ), "doMenu_siteInfo", activeTab.equals( SiteInfoActiveTab.SITE_INFO ) ) );
+            menu.add(buildMenuEntry(rl.getString("sinfo.other"), "doMenu_siteInfo",
+                    activeTab.equals(SiteInfoActiveTab.SITE_INFO)));
         }
 
-        if( allowUpdateSite )
-        {
-            if( !isMyWorkspace )
-            {
+        if (allowUpdateSite) {
+            if (!isMyWorkspace) {
                 // 'Edit Site Information'
-                menu.add( buildMenuEntry( rl.getString( "java.editsite" ), "doMenu_edit_site_info", activeTab.equals( SiteInfoActiveTab.EDIT_SITE_INFO ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.editsite"), "doMenu_edit_site_info",
+                        activeTab.equals(SiteInfoActiveTab.EDIT_SITE_INFO)));
             }
 
             // 'Manage Tools'
-            menu.add( buildMenuEntry( rl.getString( "java.edittools" ), "doMenu_edit_site_tools", activeTab.equals( SiteInfoActiveTab.MANAGE_TOOLS ) ) );
+            menu.add(buildMenuEntry(rl.getString("java.edittools"), "doMenu_edit_site_tools",
+                    activeTab.equals(SiteInfoActiveTab.MANAGE_TOOLS)));
 
-            // If the page order helper is available, not stealthed and not hidden, show the link
-            if( !TM.isStealthed("sakai-site-pageorder-helper" ) )
-            {
+            // If the page order helper is available, not stealthed and not hidden, show the
+            // link
+            if (!TM.isStealthed("sakai-site-pageorder-helper")) {
                 // In particular, need to check site types for showing the tool or not
-                if( SiteAction.isPageOrderAllowed( siteType, siteProperties.getProperty( SiteConstants.SITE_PROPERTY_OVERRIDE_HIDE_PAGEORDER_SITE_TYPES ) ) )
-                {
+                if (SiteAction.isPageOrderAllowed(siteType,
+                        siteProperties.getProperty(SiteConstants.SITE_PROPERTY_OVERRIDE_HIDE_PAGEORDER_SITE_TYPES))) {
                     // 'Tool Order'
-                    menu.add( buildMenuEntry( rl.getString( "java.orderpages" ), "doPageOrderHelper", activeTab.equals( SiteInfoActiveTab.TOOL_ORDER ) ) );
+                    menu.add(buildMenuEntry(rl.getString("java.orderpages"), "doPageOrderHelper",
+                            activeTab.equals(SiteInfoActiveTab.TOOL_ORDER)));
                 }
             }
 
-            menu.add( buildMenuEntry( rl.getString( "java.datemanager" ), "doDateManagerHelper", activeTab.equals( SiteInfoActiveTab.TOOL_ORDER ) ) );
+            menu.add(buildMenuEntry(rl.getString("java.datemanager"), "doDateManagerHelper",
+                    activeTab.equals(SiteInfoActiveTab.TOOL_ORDER)));
         }
 
-        // If the add participant helper is available, not stealthed and not hidden, show the tab
-        if( allowUpdateSiteMembership && !isMyWorkspace && !TM.isStealthed( SiteAction.getAddUserHelper( site ) ) )
-        {
+        // If the add participant helper is available, not stealthed and not hidden,
+        // show the tab
+        if (allowUpdateSiteMembership && !isMyWorkspace && !TM.isStealthed(SiteAction.getAddUserHelper(site))) {
             // 'Add Participants'
-            menu.add( buildMenuEntry( rl.getString( "java.addp" ), "doParticipantHelper", activeTab.equals( SiteInfoActiveTab.ADD_PARTICIPANTS ) ) );
+            menu.add(buildMenuEntry(rl.getString("java.addp"), "doParticipantHelper",
+                    activeTab.equals(SiteInfoActiveTab.ADD_PARTICIPANTS)));
         }
 
-        if( allowViewRoster && !isMyWorkspace )
-        {
+        if (allowViewRoster && !isMyWorkspace) {
             // 'Manage Participants'
-            menu.add( buildMenuEntry( rl.getString( "java.manageParticipants" ), "doMenu_siteInfo_manageParticipants", activeTab.equals( SiteInfoActiveTab.MANAGE_PARTICIPANTS ) ) );
+            menu.add(buildMenuEntry(rl.getString("java.manageParticipants"), "doMenu_siteInfo_manageParticipants",
+                    activeTab.equals(SiteInfoActiveTab.MANAGE_PARTICIPANTS)));
         }
 
-        if( allowUpdateSiteMembership && !isMyWorkspace )
-        {
-            boolean allowEditRosterEnabled = ServerConfigurationService.getBoolean( SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER, SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER_DEFAULT );
-            if( allowEditRosterEnabled && siteType != null && SiteTypeUtil.isCourseSite( siteType ) )
-            {
+        if (allowUpdateSiteMembership && !isMyWorkspace) {
+            boolean allowEditRosterEnabled = ServerConfigurationService
+                    .getBoolean(SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER, SAK_PROP_SITE_SETUP_ALLOW_EDIT_ROSTER_DEFAULT);
+            if (allowEditRosterEnabled && siteType != null && SiteTypeUtil.isCourseSite(siteType)) {
                 // 'Edit Class Roster(s)'
-                menu.add( buildMenuEntry( rl.getString( "java.editc" ), "doMenu_siteInfo_editClass", activeTab.equals( SiteInfoActiveTab.EDIT_CLASS_ROSTERS ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.editc"), "doMenu_siteInfo_editClass",
+                        activeTab.equals(SiteInfoActiveTab.EDIT_CLASS_ROSTERS)));
             }
         }
 
-        if( allowUpdateGroupMembership )
-        {
-            boolean groupSupportEnabled = ServerConfigurationService.getBoolean( SiteAction.SAK_PROP_SITE_SETUP_GROUP_SUPPORT, SiteAction.SAK_PROP_SITE_SETUP_GROUP_SUPPORT_DEFAULT );
-            if( !isMyWorkspace && groupSupportEnabled ) {
+        if (allowUpdateGroupMembership) {
+            boolean groupSupportEnabled = ServerConfigurationService.getBoolean(
+                    SiteAction.SAK_PROP_SITE_SETUP_GROUP_SUPPORT, SiteAction.SAK_PROP_SITE_SETUP_GROUP_SUPPORT_DEFAULT);
+            if (!isMyWorkspace && groupSupportEnabled) {
                 // 'Manage Groups'
-                menu.add( buildMenuEntry( rl.getString( "java.group" ), "doManageGroupHelper", activeTab.equals( SiteInfoActiveTab.MANAGE_GROUPS ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.group"), "doManageGroupHelper",
+                        activeTab.equals(SiteInfoActiveTab.MANAGE_GROUPS)));
             }
         }
 
-        if( allowUpdateSite && !isMyWorkspace )
-        {
-            if( !TM.isStealthed( "sakai-site-manage-link-helper" ) )
-            {
+        if (allowUpdateSite && !isMyWorkspace) {
+            if (!TM.isStealthed("sakai-site-manage-link-helper")) {
                 // 'Link to Parent Site'
-                menu.add( buildMenuEntry( rl.getString( "java.link" ), "doLinkHelper", activeTab.equals( SiteInfoActiveTab.LINK_TO_PARENT_SITE ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.link"), "doLinkHelper",
+                        activeTab.equals(SiteInfoActiveTab.LINK_TO_PARENT_SITE)));
             }
 
-            if( !TM.isStealthed( "sakai.lti.admin.helper" ) )
-            {
+            if (!TM.isStealthed("sakai.lti.admin.helper")) {
                 // 'External Tools'
-                menu.add( buildMenuEntry( rl.getString( "java.external" ), "doExternalHelper", activeTab.equals( SiteInfoActiveTab.EXTERNAL_TOOLS ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.external"), "doExternalHelper",
+                        activeTab.equals(SiteInfoActiveTab.EXTERNAL_TOOLS)));
             }
 
             List<String> providedSiteTypes = siteTypeProvider.getTypes();
             boolean isProvidedType = false;
-            if( siteType != null && providedSiteTypes.contains( siteType ) )
-            {
+            if (siteType != null && providedSiteTypes.contains(siteType)) {
                 isProvidedType = true;
             }
 
-            if( !isProvidedType )
-            {
+            if (!isProvidedType) {
                 // 'Manage Access'
-                menu.add( buildMenuEntry( rl.getString( "java.siteaccess" ), "doMenu_edit_site_access", activeTab.equals( SiteInfoActiveTab.MANAGE_ACCESS ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.siteaccess"), "doMenu_edit_site_access",
+                        activeTab.equals(SiteInfoActiveTab.MANAGE_ACCESS)));
 
-                boolean duplicateSiteEnabled = ServerConfigurationService.getBoolean( SAK_PROP_ALLOW_DUPLICATE_SITE, SAK_PROP_ALLOW_DUPLICATE_SITE_DEFAULT );
-                if( SS.allowAddSite( null ) && duplicateSiteEnabled )
-                {
+                boolean duplicateSiteEnabled = ServerConfigurationService.getBoolean(SAK_PROP_ALLOW_DUPLICATE_SITE,
+                        SAK_PROP_ALLOW_DUPLICATE_SITE_DEFAULT);
+                if (SS.allowAddSite(null) && duplicateSiteEnabled) {
                     // 'Duplicate Site'
-                    menu.add( buildMenuEntry( rl.getString( "java.duplicate" ), "doMenu_siteInfo_duplicate", activeTab.equals( SiteInfoActiveTab.DUPLICATE_SITE ) ) );
+                    menu.add(buildMenuEntry(rl.getString("java.duplicate"), "doMenu_siteInfo_duplicate",
+                            activeTab.equals(SiteInfoActiveTab.DUPLICATE_SITE)));
                 }
 
                 // Import link should be visible even if only one site
-                List<Site> updatableSites = SS.getSites( SelectionType.UPDATE, null, null, null, SortType.TITLE_ASC, null );
-                if( updatableSites.size() > 0 )
-                {
-                    String action = ServerConfigurationService.getBoolean( SAK_PROP_CLEAN_IMPORT_SITE, SAK_PROP_CLEAN_IMPORT_SITE_DEFAULT )
-                                    ? "doMenu_siteInfo_importSelection" : "doMenu_siteInfo_import";
+                List<Site> updatableSites = SS.getSites(SelectionType.UPDATE, null, null, null, SortType.TITLE_ASC,
+                        null);
+                if (updatableSites.size() > 0) {
+                    String action = ServerConfigurationService.getBoolean(SAK_PROP_CLEAN_IMPORT_SITE,
+                            SAK_PROP_CLEAN_IMPORT_SITE_DEFAULT)
+                                    ? "doMenu_siteInfo_importSelection"
+                                    : "doMenu_siteInfo_import";
 
                     // 'Import from Site'
-                    menu.add( buildMenuEntry( rl.getString( "java.import" ), action, activeTab.equals( SiteInfoActiveTab.IMPORT_FROM_SITE ) ) );
+                    menu.add(buildMenuEntry(rl.getString("java.import"), action,
+                            activeTab.equals(SiteInfoActiveTab.IMPORT_FROM_SITE)));
 
-                    boolean importFromFileEnabled = ServerConfigurationService.getBoolean( SAK_PROP_SITE_SETUP_IMPORT_FILE, SAK_PROP_SITE_SETUP_IMPORT_FILE_DEFAULT );
-                    if( importFromFileEnabled )
-                    {
+                    boolean importFromFileEnabled = ServerConfigurationService
+                            .getBoolean(SAK_PROP_SITE_SETUP_IMPORT_FILE, SAK_PROP_SITE_SETUP_IMPORT_FILE_DEFAULT);
+                    if (importFromFileEnabled) {
                         // 'Import from Archive File'
-                        menu.add( buildMenuEntry( rl.getString( "java.importFile" ), "doAttachmentsMtrlFrmFile", activeTab.equals( SiteInfoActiveTab.IMPORT_FROM_ARCHIVE ) ) );
+                        menu.add(buildMenuEntry(rl.getString("java.importFile"), "doAttachmentsMtrlFrmFile",
+                                activeTab.equals(SiteInfoActiveTab.IMPORT_FROM_ARCHIVE)));
                     }
                 }
             }
 
-            boolean eventLogEnabled = ServerConfigurationService.getBoolean( SAK_PROP_DISPLAY_USER_AUDIT_LOG, SAK_PROP_DISPLAY_USER_AUDIT_LOG_DEFAULT );
-            if( !TM.isStealthed( "sakai.useraudit" ) && eventLogEnabled )
-            {
+            boolean eventLogEnabled = ServerConfigurationService.getBoolean(SAK_PROP_DISPLAY_USER_AUDIT_LOG,
+                    SAK_PROP_DISPLAY_USER_AUDIT_LOG_DEFAULT);
+            if (!TM.isStealthed("sakai.useraudit") && eventLogEnabled) {
                 // 'User Audit Log'
-                menu.add( buildMenuEntry( rl.getString( "java.userAuditEventLog" ), "doUserAuditEventLog", activeTab.equals( SiteInfoActiveTab.USER_AUDIT_LOG ) ) );
+                menu.add(buildMenuEntry(rl.getString("java.userAuditEventLog"), "doUserAuditEventLog",
+                        activeTab.equals(SiteInfoActiveTab.USER_AUDIT_LOG)));
             }
         }
-        //Add manage overview in workspace
-        if(allowUpdateSite){
+        // Add manage overview in workspace
+        if (allowUpdateSite) {
             List<SitePage> pages = site.getPages();
-            for(SitePage page : pages){
+            for (SitePage page : pages) {
                 if (page.isHomePage()) {
-                    //now we know this site has a home page.
+                    // now we know this site has a home page.
                     menu.add(new MenuEntry(rl.getString("manage.overview"),
                             "doManageOverview"));
                     break;
@@ -352,35 +371,36 @@ public class MenuBuilder
         }
 
         // Add the menu to the context if it's not empty
-        addMenuToContext( menu, context );
+        addMenuToContext(menu, context);
     }
 
     /**
      * Utility method to build a {@link MenuItem} for the given values
      * 
-     * @param title the title of the {@link MenuItem} (the text that appears in the UI for the tab)
-     * @param action the action of the {@link MenuItem} (the method in SiteAction this tab calls when clicked)
-     * @param isCurrent true if this {@link MenuItem} is the currently selected tab; false otherwise
+     * @param title     the title of the {@link MenuItem} (the text that appears in
+     *                  the UI for the tab)
+     * @param action    the action of the {@link MenuItem} (the method in SiteAction
+     *                  this tab calls when clicked)
+     * @param isCurrent true if this {@link MenuItem} is the currently selected tab;
+     *                  false otherwise
      * @return the built {@link MenuItem}
      */
-    private static MenuEntry buildMenuEntry( String title, String action, boolean isCurrent )
-    {
-        MenuEntry entry = new MenuEntry( title, action );
-        entry.setIsCurrent( isCurrent );
+    private static MenuEntry buildMenuEntry(String title, String action, boolean isCurrent) {
+        MenuEntry entry = new MenuEntry(title, action);
+        entry.setIsCurrent(isCurrent);
         return entry;
     }
 
     /**
-     * Utility method to add the menu to the context under the parameter name "menu", only if the menu contains items.
+     * Utility method to add the menu to the context under the parameter name
+     * "menu", only if the menu contains items.
      *
-     * @param menu the {@link Menu} to add to the context if not empty
+     * @param menu    the {@link Menu} to add to the context if not empty
      * @param context the {@link Context} to add the menu to
      */
-    public static void addMenuToContext( Menu menu, Context context )
-    {
-        if( !menu.isEmpty() )
-        {
-            context.put( Menu.CONTEXT_MENU, menu );
+    public static void addMenuToContext(Menu menu, Context context) {
+        if (!menu.isEmpty()) {
+            context.put(Menu.CONTEXT_MENU, menu);
         }
     }
 }

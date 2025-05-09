@@ -208,7 +208,7 @@
 		<input type="hidden" name="back" value="$!backIndex" />
 		<input type="hidden" name="templateIndex" value="$!templateIndex" />
 		<input type="hidden" name="continue" value="12" />
-		#if ($isSchoolSetup)
+		#if ($deptType == "school")
 			<input type="hidden" name="devtek-department-type" value="school" />
 		#end
 		<p class="act">

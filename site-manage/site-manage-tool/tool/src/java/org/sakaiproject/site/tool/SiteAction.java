@@ -199,7 +199,9 @@ public class SiteAction extends PagedResourceActionII {
             "-newSite",
             "-siteInfo-manageOverview", // 65
             "-school-list",
-            "-school-editInfo"
+            "-school-editInfo",
+            "-dept-list",
+            "-dept-editInfo",
     };
 
     /**
@@ -423,6 +425,9 @@ public class SiteAction extends PagedResourceActionII {
     private static final String STATE_SITE_CITY = "devtek-site-city";
     private static final String STATE_SITE_STATE = "devtek-site-state";
     private static final String STATE_SITE_ZIPCODE = "devtek-site-zipcode";
+
+    private static final String STATE_SITE_DEPT_PARENT = "devtek-site-parent";
+    private static final String STATE_SITE_DEPT_ADMIN = "devtek-site-admin";
 
     public static final String SITE_DEPARTMENT_TYPE = "devtek-department-type";
     public static final String IS_DISPLAY_ONLY_SCHOOL = "IS_DISPLAY_ONLY_SCHOOL";
@@ -1625,11 +1630,32 @@ public class SiteAction extends PagedResourceActionII {
 
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
-                if ("true".equals(state.getAttribute("isSchoolSetup"))) {
-                    state.setAttribute(IS_DISPLAY_ONLY_SCHOOL, Boolean.TRUE);
+                if ("school".equals(state.getAttribute("deptType"))) {
+                    state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
+                }
+                else if("department".equals(state.getAttribute("deptType"))) {
+                    state.setAttribute("IS_DISPLAY_ONLY_DEPARTMENT", Boolean.TRUE);
                 }
                 List<Site> allSites = prepPage(state);
 
+                for (Site _site : allSites) {
+                    String userId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-admin"), "") ;
+                    if (userId != null && !userId.isEmpty()) {
+                        try {
+                            _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getFirstName() + " " + userDirectoryService.getUser(userId).getLastName(),""));
+                        } catch (Exception e) {
+                            // _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getDisplayName(),""));
+                        }
+                    }
+                    String siteId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-parent"), "") ;
+                    if (siteId != null && !siteId.isEmpty()) {
+                        try {
+                            _site.getPropertiesEdit().addProperty("parentTitle", getStringAttribute(siteService.getSite(siteId).getTitle(),""));
+                        } catch (Exception e) {
+                            // _site.getPropertiesEdit().addProperty("parentTitle", "");
+                        }
+                    }
+                }
 
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
@@ -1693,7 +1719,9 @@ public class SiteAction extends PagedResourceActionII {
                     clearNewSiteStateParameters(state);
                 }
 
-                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[66] : TEMPLATE[0]);
+                return (String) getContext(data).get("template") + 
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[66] : 
+                         ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[68] : TEMPLATE[0]));
 
             case 1:
                 /*
@@ -1863,9 +1891,9 @@ public class SiteAction extends PagedResourceActionII {
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 String siteType = (String) state.getAttribute(STATE_SITE_TYPE);
 
-
-                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
-
+               
+                context.put("deptType", state.getAttribute("deptType"));
+               
 
                 if (SiteTypeUtil.isCourseSite(siteType)) {
                     context.put("isCourseSite", Boolean.TRUE);
@@ -2291,6 +2319,16 @@ public class SiteAction extends PagedResourceActionII {
 
                 boolean displaySiteAlias = displaySiteAlias();
                 context.put("displaySiteAlias", Boolean.valueOf(displaySiteAlias));
+
+                //Siraj Added code for users
+
+                List<User> allUsers = userDirectoryService.getUsers();
+                context.put("allusers", allUsers);
+                List<Site> SitesForDropdown = siteService.getSites(SelectionType.MEMBER, null, null, null, SortType.TITLE_ASC, null);
+                context.put("allsites", SitesForDropdown);
+                String schoolId =  getStringAttribute(userDirectoryService.getCurrentUser().getProperties().get("devtek-school-id"),"");
+                context.put("devtek-school-id",schoolId);
+
                 if (displaySiteAlias) {
                     context.put(FORM_SITE_URL_BASE, getSiteBaseUrl());
                     context.put(FORM_SITE_ALIAS, siteInfo.getFirstAlias());
@@ -2400,23 +2438,30 @@ public class SiteAction extends PagedResourceActionII {
                     context.put(STATE_SITE_ZIPCODE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE), ""));
                     context.put(STATE_SITE_STATE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_STATE), ""));
                     context.put(STATE_SITE_CITY, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_CITY), ""));
+                    context.put(STATE_SITE_DEPT_PARENT, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_PARENT), ""));
+                    context.put(STATE_SITE_DEPT_ADMIN, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_ADMIN), ""));
                 } else {
                     context.put(STATE_SITE_ADDRESS, "");
                     context.put(STATE_SITE_ZIPCODE, "");
                     context.put(STATE_SITE_STATE, "");
                     context.put(STATE_SITE_CITY, "");
+                    context.put(STATE_SITE_DEPT_PARENT, "");
+                    context.put(STATE_SITE_DEPT_ADMIN, "");
                 }
 
                 // available languages in sakai.properties
                 List locales = getPrefLocales();
                 context.put("locales", locales);
 
+
                 // SAK-22384 mathjax support
                 MathJaxEnabler.addMathJaxSettingsToSiteInfoContext(context, site, state);
                 PortalNeochatEnabler.addToSiteInfoContext(context, site, state);
 
-                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[67] : TEMPLATE[13]);
-            case 14:
+                return (String) getContext(data).get("template") + 
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[67] : 
+                        ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[69] : TEMPLATE[13]));
+                case 14:
                 /*
                  * buildContextForTemplate chef_site-siteInfo-editInfoConfirm.vm
                  *
@@ -2431,7 +2476,7 @@ public class SiteAction extends PagedResourceActionII {
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 context.put("displaySiteAlias", Boolean.valueOf(displaySiteAlias()));
 
-                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
+                context.put("deptType", state.getAttribute("deptType"));
 
                 siteType = (String) state.getAttribute(STATE_SITE_TYPE);
                 if (SiteTypeUtil.isCourseSite(siteType)) {
@@ -4984,7 +5029,11 @@ public class SiteAction extends PagedResourceActionII {
         if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
             if (termProp == null)
                 termProp = new HashMap<String, String>();
-            termProp.put(SITE_DEPARTMENT_TYPE, DEVTEK_DEPARTMENT_SCHOOL);
+            termProp.put(SITE_DEPARTMENT_TYPE, "school");
+        }else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+            if (termProp == null)
+                termProp = new HashMap<String, String>();
+            termProp.put(SITE_DEPARTMENT_TYPE, "department");
         }
 
 
@@ -5119,7 +5168,11 @@ public class SiteAction extends PagedResourceActionII {
             if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
                 if (termProp == null)
                     termProp = new HashMap<String, String>();
-                termProp.put(SITE_DEPARTMENT_TYPE, DEVTEK_DEPARTMENT_SCHOOL);
+                termProp.put(SITE_DEPARTMENT_TYPE, "school");
+            } else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+                if (termProp == null)
+                    termProp = new HashMap<String, String>();
+                termProp.put(SITE_DEPARTMENT_TYPE, "department");
             }
 
             if (securityService.isSuperUser()) {
@@ -8473,8 +8526,8 @@ public class SiteAction extends PagedResourceActionII {
         state.setAttribute(STATE_ACTION, "SiteAction");
         setupFormNamesAndConstants(state);
         PortletConfig config = portlet.getPortletConfig();
-        String isSchoolSetup = StringUtils.trimToEmpty(config.getInitParameter("isSchoolSetup"));
-        state.setAttribute("isSchoolSetup", isSchoolSetup);
+        String deptType = StringUtils.trimToEmpty(config.getInitParameter("department_type"));
+        state.setAttribute("deptType", deptType);
 
         if (state.getAttribute(STATE_PAGESIZE_SITEINFO) == null) {
             state.setAttribute(STATE_PAGESIZE_SITEINFO, new Hashtable());
@@ -8954,6 +9007,8 @@ public class SiteAction extends PagedResourceActionII {
                                     };
                                     userAuditList.add(userAuditString);
                                 }
+                                // remove the properties from the user properties edit.
+                                removeUserPropertiesByEids(Arrays.asList(user.getEid()), Arrays.asList("devtek-school-id"));
                             }
                         } catch (UserNotDefinedException e) {
                             log.error(this + ".doUpdate_participant: IdUnusedException " + rId + ". ", e);
@@ -15783,5 +15838,55 @@ public class SiteAction extends PagedResourceActionII {
     private boolean getBooleanAttribute(SessionState state, String attributeName, boolean defaultValue) {
         Object value = state.getAttribute(attributeName);
         return value != null ? (boolean) value : defaultValue;
+    }
+    public boolean removeUserPropertiesByEids(List<String> eids, List<String> propertyNames) {
+        if (eids == null || eids.isEmpty() || propertyNames == null || propertyNames.isEmpty()) {
+            log.warn("No EIDs or property names provided");
+            return false;
+        }
+
+        boolean allSuccess = true;
+        for (String eid : eids) {
+            try {
+                // Get user by EID
+                User user = userDirectoryService.getUserByEid(eid);
+
+                // Check if we have permission to edit this user
+                if (!userDirectoryService.allowUpdateUser(user.getId())) {
+                    log.warn("No permission to update user: " + eid);
+                    allSuccess = false;
+                    continue;
+                }
+
+                // Get user edit object
+                UserEdit userEdit = userDirectoryService.editUser(user.getId());
+
+                // Remove each property
+                ResourcePropertiesEdit props = userEdit.getPropertiesEdit();
+                for (String propertyName : propertyNames) {
+                    props.removeProperty(propertyName);
+                }
+
+                // Commit changes
+                userDirectoryService.commitEdit(userEdit);
+
+                log.info("Successfully removed properties for user: " + eid);
+
+            } catch (UserNotDefinedException e) {
+                log.error("User not found with EID: " + eid, e);
+                allSuccess = false;
+            } catch (UserPermissionException e) {
+                log.error("Permission denied to update user: " + eid, e);
+                allSuccess = false;
+            } catch (UserLockedException e) {
+                log.error("User is locked: " + eid, e);
+                allSuccess = false;
+            } catch (Exception e) {
+                log.error("Error removing user properties: " + eid, e);
+                allSuccess = false;
+            }
+        }
+
+        return allSuccess;
     }
 }
