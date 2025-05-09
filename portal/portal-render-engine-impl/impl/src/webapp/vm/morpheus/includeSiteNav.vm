@@ -83,10 +83,12 @@
          #set ($hasCoursePages = false)
          #set ($hasProjectPages = false)
          #set ($hasAdminPages = false)
+        #set ($hasDeptPages = false)
          #set ($coursePages = [])
          #set ($projectPages = [])
          #set ($adminPages = [])
          #set ($regularPages = [])
+        #set ($deptPages = [])
         
       ## Sort pages into course, project, and regular
     #foreach ($page in $site.pages)
@@ -97,6 +99,9 @@
         #elseif ($page.type && $page.type.contains("project") && $page.properties.get('devtek-department-type') == 'school')
             #set ($hasProjectPages = true)
             #set ($discard = $projectPages.add($page))
+        #elseif ($page.type && $page.type.contains("project") && $page.properties.get('devtek-department-type') == 'department')
+            #set ($hasDeptPages = true)
+            #set ($discard = $deptPages.add($page))
         #elseif ($page.isPinned)
             #set ($hasAdminPages = true)
             #set ($discard = $adminPages.add($page))
@@ -155,6 +160,53 @@
                                         #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
                                     #end
                                 </ul>
+                                </div>
+                            </li>
+                        #end
+                    </ul>
+                </div>
+            </li>
+        #end
+        ## If we have department pages, create a collapsible section for them
+        #if ($hasDeptPages)
+            <li class="nav-item dept-pages-container">
+                <button class="btn btn-nav w-100 ps-4 d-flex text-start align-items-center new-dropdowns"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#dept-pages-${safeSiteId}"
+                        aria-expanded="false"
+                        aria-controls="dept-pages-${safeSiteId}">
+                    <div class="d-flex me-auto rounded-end">
+                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                        <span class="me-2">Department</span>
+                    </div>
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="dept-pages-${safeSiteId}">
+                    <ul class="nav flex-column">
+                        #foreach ($page in $deptPages)
+                            <li class="nav-item">
+                                <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#dept-page-${safeSiteId}-${velocityCount}"
+                                        aria-expanded="false"
+                                        aria-controls="dept-page-${safeSiteId}-${velocityCount}">
+                                    <div class="d-flex me-auto rounded-end">
+                                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                                        <span class="me-2 dept-page-title">${page.title}</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                </button>
+                                <div class="collapse" id="dept-page-${safeSiteId}-${velocityCount}">
+                                    <ul class="nav flex-column">
+                                        #foreach ($page_s in $page.pages)
+                                        #if ($site.isCurrent)
+                                            #set ($pageUrl = $page_s.resetUrl)
+                                        #else
+                                            #set ($pageUrl = $page_s.url)
+                                        #end
+                                        #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
+                                    #end
+                                    </ul>
                                 </div>
                             </li>
                         #end
