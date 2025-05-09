@@ -8970,6 +8970,8 @@ public class SiteAction extends PagedResourceActionII {
                                     };
                                     userAuditList.add(userAuditString);
                                 }
+                                // remove the properties from the user properties edit.
+                                removeUserPropertiesByEids(Arrays.asList(user.getEid()), Arrays.asList("devtek-school-id"));
                             }
                         } catch (UserNotDefinedException e) {
                             log.error(this + ".doUpdate_participant: IdUnusedException " + rId + ". ", e);
@@ -15799,5 +15801,55 @@ public class SiteAction extends PagedResourceActionII {
     private boolean getBooleanAttribute(SessionState state, String attributeName, boolean defaultValue) {
         Object value = state.getAttribute(attributeName);
         return value != null ? (boolean) value : defaultValue;
+    }
+    public boolean removeUserPropertiesByEids(List<String> eids, List<String> propertyNames) {
+        if (eids == null || eids.isEmpty() || propertyNames == null || propertyNames.isEmpty()) {
+            log.warn("No EIDs or property names provided");
+            return false;
+        }
+
+        boolean allSuccess = true;
+        for (String eid : eids) {
+            try {
+                // Get user by EID
+                User user = userDirectoryService.getUserByEid(eid);
+
+                // Check if we have permission to edit this user
+                if (!userDirectoryService.allowUpdateUser(user.getId())) {
+                    log.warn("No permission to update user: " + eid);
+                    allSuccess = false;
+                    continue;
+                }
+
+                // Get user edit object
+                UserEdit userEdit = userDirectoryService.editUser(user.getId());
+
+                // Remove each property
+                ResourcePropertiesEdit props = userEdit.getPropertiesEdit();
+                for (String propertyName : propertyNames) {
+                    props.removeProperty(propertyName);
+                }
+
+                // Commit changes
+                userDirectoryService.commitEdit(userEdit);
+
+                log.info("Successfully removed properties for user: " + eid);
+
+            } catch (UserNotDefinedException e) {
+                log.error("User not found with EID: " + eid, e);
+                allSuccess = false;
+            } catch (UserPermissionException e) {
+                log.error("Permission denied to update user: " + eid, e);
+                allSuccess = false;
+            } catch (UserLockedException e) {
+                log.error("User is locked: " + eid, e);
+                allSuccess = false;
+            } catch (Exception e) {
+                log.error("Error removing user properties: " + eid, e);
+                allSuccess = false;
+            }
+        }
+
+        return allSuccess;
     }
 }
