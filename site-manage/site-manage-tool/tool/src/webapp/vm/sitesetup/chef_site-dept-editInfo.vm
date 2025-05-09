@@ -5,16 +5,23 @@
 	## header for edit site information page
 	<div class="page-header">
 		<h3>
-			#if($existingSite) $tlang.getString("school.edit") #else $tlang.getString("school.add") #end 
+			#if($existingSite) $tlang.getString("dept.edit") #else $tlang.getString("dept.add") #end 
 		</h3>
 	</div>
+	<style>
+		#addEditDept fieldset {
+			border: 2px solid var(--sakai-text-color-1);
+			padding: 1em;
+			position: relative;
+		}
+	</style>
 
 	#if ($alertMessage)<div class="sak-banner-error">$tlang.getString("sitediinf.alert") $alertMessage</div>#end
 
-	<form name="classInformationForm" id="classInformationForm" method="post" action="#toolForm("SiteAction")">
+	<form name="addEditDept" id="addEditDept" method="post" action="#toolForm("SiteAction")">
 		<fieldset>
 			<legend>
-				#if($existingSite) $tlang.getString("school.edit") #else $tlang.getString("school.info") #end 
+				 $tlang.getString("dept.info")
 			</legend>
 			
 			#if(!$existingSite)
