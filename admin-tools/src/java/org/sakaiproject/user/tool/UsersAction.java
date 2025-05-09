@@ -233,7 +233,12 @@ public class UsersAction extends PagedResourceActionII
 
 		if (state.getAttribute("create-type") == null)
 		{
-			state.setAttribute("create-type", config.getInitParameter("create-type", ""));
+			String createType = config.getInitParameter("create-type", "");
+			// Filter out restricted types from the config
+			if ("guest".equals(createType) || "maintain".equals(createType) || "registered".equals(createType)) {
+				createType = ""; // Reset to empty if it's a restricted type
+			}
+			state.setAttribute("create-type", createType);
 		}
 
 		if (state.getAttribute(CONFIG_VALIDATE_THROUGH_EMAIL) == null)
@@ -1279,20 +1284,45 @@ public class UsersAction extends PagedResourceActionII
 			typeEnable = true;
 		}
 
-		if (typeEnable)
-		{
-			// for the case of Admin User tool creating new user
-			type = StringUtils.trimToNull(data.getParameters().getString("type"));
-			state.setAttribute("valueType", type);
-		}
-		else
-		{
-			if (createUser)
-			{
-				// for the case of Gateway Account tool creating new user
-				type = (String) state.getAttribute("create-type");
-			}
-		}
+// In readUserForm method, where type is determined (around line 1282-1298)
+if (typeEnable)
+{
+    // for the case of Admin User tool creating new user
+    type = StringUtils.trimToNull(data.getParameters().getString("type"));
+    
+    // Filter out restricted user types
+    if (type != null && ("guest".equals(type) || "maintain".equals(type) || "registered".equals(type))) {
+        log.debug("User type '{}' was filtered out", type);
+        type = null; // Reset filtered types to null
+    }
+    
+    // If no type specified or filtered, use default
+    if (type == null) {
+        type = "default";
+        log.debug("No valid type specified, using default type");
+    }
+    
+    state.setAttribute("valueType", type);
+}
+else
+{
+    if (createUser)
+    {
+        // for the case of Gateway Account tool creating new user
+        type = (String) state.getAttribute("create-type");
+        
+        // Check if it's a restricted type
+        if (type != null && ("guest".equals(type) || "maintain".equals(type) || "registered".equals(type))) {
+            type = null;
+        }
+        
+        // If no type or filtered type, use default
+        if (type == null) {
+            type = "default";
+        }
+    }
+}
+
 		
 		if ((Boolean)state.getAttribute("user.recaptcha-enabled"))
 		{
@@ -2000,16 +2030,20 @@ public class UsersAction extends PagedResourceActionII
      *
      * @return list of user types in the system
      */
-    protected List<String> getUserTypes() {
-        List<String> userTypes = new ArrayList<>();
-        List<AuthzGroup> groups = authzGroupService.getAuthzGroups(USER_TEMPLATE_PREFIX, null);
-        for (Iterator<AuthzGroup> i = groups.iterator(); i.hasNext();) {
-            AuthzGroup group = (AuthzGroup) i.next();
-            String type = group.getId().replaceFirst(USER_TEMPLATE_PREFIX, "");
-            if (!type.equals("sample")) {
-                userTypes.add(type);
-            }
+
+// Update in getUserTypes method to filter out restricted types from selectable options (around line 2050)
+protected List<String> getUserTypes() {
+    List<String> userTypes = new ArrayList<>();
+    List<AuthzGroup> groups = authzGroupService.getAuthzGroups(USER_TEMPLATE_PREFIX, null);
+    for (Iterator<AuthzGroup> i = groups.iterator(); i.hasNext();) {
+        AuthzGroup group = (AuthzGroup) i.next();
+        String type = group.getId().replaceFirst(USER_TEMPLATE_PREFIX, "");
+        // Filter out sample and restricted types from selectable options
+        if (!type.equals("sample") && !type.equals("guest") && !type.equals("maintain") && !type.equals("registered")) {
+            userTypes.add(type);
         }
-        return userTypes;
     }
+    return userTypes;
+}
+
 }
