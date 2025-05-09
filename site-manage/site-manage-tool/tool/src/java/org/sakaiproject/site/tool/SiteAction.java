@@ -425,6 +425,8 @@ public class SiteAction extends PagedResourceActionII {
     private static final String STATE_SITE_ZIPCODE = "devtek-site-zipcode";
 
     public static final String SITE_DEPARTMENT_TYPE = "devtek-department-type";
+    public static final String IS_DISPLAY_ONLY_SCHOOL = "IS_DISPLAY_ONLY_SCHOOL";
+    public static final String DEVTEK_DEPARTMENT_SCHOOL = "school";
 
     /**
      * The action for menu
@@ -1624,7 +1626,7 @@ public class SiteAction extends PagedResourceActionII {
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
                 if ("true".equals(state.getAttribute("isSchoolSetup"))) {
-                    state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
+                    state.setAttribute(IS_DISPLAY_ONLY_SCHOOL, Boolean.TRUE);
                 }
                 List<Site> allSites = prepPage(state);
 
@@ -1861,9 +1863,9 @@ public class SiteAction extends PagedResourceActionII {
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 String siteType = (String) state.getAttribute(STATE_SITE_TYPE);
 
-               
+
                 context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
-               
+
 
                 if (SiteTypeUtil.isCourseSite(siteType)) {
                     context.put("isCourseSite", Boolean.TRUE);
@@ -2414,7 +2416,7 @@ public class SiteAction extends PagedResourceActionII {
                 PortalNeochatEnabler.addToSiteInfoContext(context, site, state);
 
                 return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[67] : TEMPLATE[13]);
-                case 14:
+            case 14:
                 /*
                  * buildContextForTemplate chef_site-siteInfo-editInfoConfirm.vm
                  *
@@ -4979,10 +4981,10 @@ public class SiteAction extends PagedResourceActionII {
         }
 
 
-        if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+        if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
             if (termProp == null)
                 termProp = new HashMap<String, String>();
-            termProp.put(SITE_DEPARTMENT_TYPE, "school");
+            termProp.put(SITE_DEPARTMENT_TYPE, DEVTEK_DEPARTMENT_SCHOOL);
         }
 
 
@@ -5114,10 +5116,10 @@ public class SiteAction extends PagedResourceActionII {
                 termProp.put(Site.PROP_SITE_TERM, term);
             }
 
-            if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_SCHOOL", false)) {
+            if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
                 if (termProp == null)
                     termProp = new HashMap<String, String>();
-                termProp.put(SITE_DEPARTMENT_TYPE, "school");
+                termProp.put(SITE_DEPARTMENT_TYPE, DEVTEK_DEPARTMENT_SCHOOL);
             }
 
             if (securityService.isSuperUser()) {
@@ -6657,10 +6659,28 @@ public class SiteAction extends PagedResourceActionII {
 
         String continuePage = params.getString("continue");
         if (continuePage != null && (continuePage.equalsIgnoreCase("4") || continuePage.equalsIgnoreCase("14"))) {
-            state.setAttribute(STATE_SITE_ADDRESS, params.getString(STATE_SITE_ADDRESS));
-            state.setAttribute(STATE_SITE_CITY, params.getString(STATE_SITE_CITY));
-            state.setAttribute(STATE_SITE_STATE, params.getString(STATE_SITE_STATE));
-            state.setAttribute(STATE_SITE_ZIPCODE, params.getString(STATE_SITE_ZIPCODE));
+
+            String[] names = data.getParameters().getStrings("new_name");
+            String[] values = data.getParameters().getStrings("new_value");
+
+            if (names != null && values != null) {
+                int length = Math.min(names.length, values.length); // Avoid IndexOutOfBounds if mismatched
+                Map<String, String> props = new HashMap<>();
+                for (int i = 0; i < length; i++) {
+                    String name = getStringAttribute(names[i], "");
+                    String value = getStringAttribute(values[i], "");
+                    if (name != null && !name.isEmpty() && value != null) {
+                        props.put(name, value);
+                    }
+                }
+                if (!props.isEmpty())
+                    state.setAttribute("site-custom-props", props);
+            }
+
+//            state.setAttribute(STATE_SITE_ADDRESS, params.getString(STATE_SITE_ADDRESS));
+//            state.setAttribute(STATE_SITE_CITY, params.getString(STATE_SITE_CITY));
+//            state.setAttribute(STATE_SITE_STATE, params.getString(STATE_SITE_STATE));
+//            state.setAttribute(STATE_SITE_ZIPCODE, params.getString(STATE_SITE_ZIPCODE));
         }
 
         log.debug("doContinue index={} option={}", index, option);
@@ -6894,18 +6914,20 @@ public class SiteAction extends PagedResourceActionII {
             }
 
             ResourcePropertiesEdit rp = site.getPropertiesEdit();
-            String form_value = params.get(SITE_DEPARTMENT_TYPE);
-            if (StringUtils.isNotBlank(form_value)) {
-                rp.addProperty(SITE_DEPARTMENT_TYPE, form_value);
-            }
+//            String form_value = params.get(SITE_DEPARTMENT_TYPE);
+//            if (StringUtils.isNotBlank(form_value)) {
+//                rp.addProperty(SITE_DEPARTMENT_TYPE, form_value);
+//            }
 
 
             String optionFinish = params.get("option");
             if (optionFinish.equals("finish")) {
-                rp.addProperty(STATE_SITE_ADDRESS, (String) state.getAttribute(STATE_SITE_ADDRESS, ""));
-                rp.addProperty(STATE_SITE_CITY, (String) state.getAttribute(STATE_SITE_CITY, ""));
-                rp.addProperty(STATE_SITE_STATE, (String) state.getAttribute(STATE_SITE_STATE, ""));
-                rp.addProperty(STATE_SITE_ZIPCODE, (String) state.getAttribute(STATE_SITE_ZIPCODE, ""));
+//                rp.addProperty(STATE_SITE_ADDRESS, (String) state.getAttribute(STATE_SITE_ADDRESS, ""));
+//                rp.addProperty(STATE_SITE_CITY, (String) state.getAttribute(STATE_SITE_CITY, ""));
+//                rp.addProperty(STATE_SITE_STATE, (String) state.getAttribute(STATE_SITE_STATE, ""));
+//                rp.addProperty(STATE_SITE_ZIPCODE, (String) state.getAttribute(STATE_SITE_ZIPCODE, ""));
+
+                readCustomPropertiesFromState(state, site);
             }
 
 
@@ -6988,6 +7010,14 @@ public class SiteAction extends PagedResourceActionII {
         }
 
     }// doFinish
+
+    private void readCustomPropertiesFromState(SessionState state, Site site) {
+        Map<String, String> siteCustomProps = (Map<String, String>) state.getAttribute("site-custom-props");
+        if (siteCustomProps != null && !siteCustomProps.isEmpty()) {
+            siteCustomProps.forEach((key, value) ->
+                    site.getPropertiesEdit().addProperty(key, getStringAttribute(value, "")));
+        }
+    }
 
     /**
      * get one alias for site, if it exists
@@ -8287,10 +8317,12 @@ public class SiteAction extends PagedResourceActionII {
             siteProperties.addProperty(Site.PROP_SITE_CONTACT_EMAIL, contactEmail);
         }
 
-        Site.getPropertiesEdit().addProperty(STATE_SITE_ADDRESS, (String) state.getAttribute(STATE_SITE_ADDRESS, ""));
-        Site.getPropertiesEdit().addProperty(STATE_SITE_CITY, (String) state.getAttribute(STATE_SITE_CITY, ""));
-        Site.getPropertiesEdit().addProperty(STATE_SITE_STATE, (String) state.getAttribute(STATE_SITE_STATE, ""));
-        Site.getPropertiesEdit().addProperty(STATE_SITE_ZIPCODE, (String) state.getAttribute(STATE_SITE_ZIPCODE, ""));
+        readCustomPropertiesFromState(state, Site);
+
+//        Site.getPropertiesEdit().addProperty(STATE_SITE_ADDRESS, (String) state.getAttribute(STATE_SITE_ADDRESS, ""));
+//        Site.getPropertiesEdit().addProperty(STATE_SITE_CITY, (String) state.getAttribute(STATE_SITE_CITY, ""));
+//        Site.getPropertiesEdit().addProperty(STATE_SITE_STATE, (String) state.getAttribute(STATE_SITE_STATE, ""));
+//        Site.getPropertiesEdit().addProperty(STATE_SITE_ZIPCODE, (String) state.getAttribute(STATE_SITE_ZIPCODE, ""));
 
         Collection<String> oldAliasIds = getSiteReferenceAliasIds(Site);
         boolean updateSiteRefAliases = aliasesEditable(state, Site.getId());
@@ -15737,6 +15769,14 @@ public class SiteAction extends PagedResourceActionII {
             return defaultValue;
         }
         return input.toString();
+    }
+
+
+    public String getStringAttribute(String value, String defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+        return value;
     }
 
 
