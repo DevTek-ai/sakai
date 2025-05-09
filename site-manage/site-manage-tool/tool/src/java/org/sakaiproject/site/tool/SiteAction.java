@@ -199,7 +199,9 @@ public class SiteAction extends PagedResourceActionII {
             "-newSite",
             "-siteInfo-manageOverview", // 65
             "-school-list",
-            "-school-editInfo"
+            "-school-editInfo",
+            "-dept-list",
+            "-dept-editInfo",
     };
 
     /**
@@ -1623,11 +1625,13 @@ public class SiteAction extends PagedResourceActionII {
 
                 String portalUrl = serverConfigurationService.getPortalUrl();
                 context.put("portalUrl", portalUrl);
-                if ("true".equals(state.getAttribute("isSchoolSetup"))) {
+                if ("school".equals(state.getAttribute("deptType"))) {
                     state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
                 }
+                else if("department".equals(state.getAttribute("deptType"))) {
+                    state.setAttribute("IS_DISPLAY_ONLY_DEPARTMENT", Boolean.TRUE);
+                }
                 List<Site> allSites = prepPage(state);
-
 
                 state.setAttribute(STATE_SITES, allSites);
                 context.put("sites", allSites);
@@ -1691,7 +1695,9 @@ public class SiteAction extends PagedResourceActionII {
                     clearNewSiteStateParameters(state);
                 }
 
-                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[66] : TEMPLATE[0]);
+                return (String) getContext(data).get("template") + 
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[66] : 
+                         ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[68] : TEMPLATE[0]));
 
             case 1:
                 /*
@@ -1862,7 +1868,7 @@ public class SiteAction extends PagedResourceActionII {
                 String siteType = (String) state.getAttribute(STATE_SITE_TYPE);
 
                
-                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
+                context.put("deptType", state.getAttribute("deptType"));
                
 
                 if (SiteTypeUtil.isCourseSite(siteType)) {
@@ -2413,7 +2419,9 @@ public class SiteAction extends PagedResourceActionII {
                 MathJaxEnabler.addMathJaxSettingsToSiteInfoContext(context, site, state);
                 PortalNeochatEnabler.addToSiteInfoContext(context, site, state);
 
-                return (String) getContext(data).get("template") + ("true".equals(state.getAttribute("isSchoolSetup")) ? TEMPLATE[67] : TEMPLATE[13]);
+                return (String) getContext(data).get("template") + 
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[67] : 
+                        ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[69] : TEMPLATE[13]));
                 case 14:
                 /*
                  * buildContextForTemplate chef_site-siteInfo-editInfoConfirm.vm
@@ -2429,7 +2437,7 @@ public class SiteAction extends PagedResourceActionII {
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 context.put("displaySiteAlias", Boolean.valueOf(displaySiteAlias()));
 
-                context.put("isSchoolSetup", ("true".equals(state.getAttribute("isSchoolSetup")) ? Boolean.TRUE : Boolean.FALSE));
+                context.put("deptType", state.getAttribute("deptType"));
 
                 siteType = (String) state.getAttribute(STATE_SITE_TYPE);
                 if (SiteTypeUtil.isCourseSite(siteType)) {
@@ -4983,6 +4991,10 @@ public class SiteAction extends PagedResourceActionII {
             if (termProp == null)
                 termProp = new HashMap<String, String>();
             termProp.put(SITE_DEPARTMENT_TYPE, "school");
+        }else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+            if (termProp == null)
+                termProp = new HashMap<String, String>();
+            termProp.put(SITE_DEPARTMENT_TYPE, "department");
         }
 
 
@@ -5118,6 +5130,10 @@ public class SiteAction extends PagedResourceActionII {
                 if (termProp == null)
                     termProp = new HashMap<String, String>();
                 termProp.put(SITE_DEPARTMENT_TYPE, "school");
+            } else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+                if (termProp == null)
+                    termProp = new HashMap<String, String>();
+                termProp.put(SITE_DEPARTMENT_TYPE, "department");
             }
 
             if (securityService.isSuperUser()) {
@@ -8441,8 +8457,8 @@ public class SiteAction extends PagedResourceActionII {
         state.setAttribute(STATE_ACTION, "SiteAction");
         setupFormNamesAndConstants(state);
         PortletConfig config = portlet.getPortletConfig();
-        String isSchoolSetup = StringUtils.trimToEmpty(config.getInitParameter("isSchoolSetup"));
-        state.setAttribute("isSchoolSetup", isSchoolSetup);
+        String deptType = StringUtils.trimToEmpty(config.getInitParameter("department_type"));
+        state.setAttribute("deptType", deptType);
 
         if (state.getAttribute(STATE_PAGESIZE_SITEINFO) == null) {
             state.setAttribute(STATE_PAGESIZE_SITEINFO, new Hashtable());

@@ -25,8 +25,7 @@
 		<configuration name="privateSiteTypes" value="" />
 
 		<configuration name="site_mode" value="sitesetup" type="final" />
-		<configuration name="isSchoolSetup" value="true" />
-
+		<configuration name="department_type" value="school" />
 
 		<category name="myworkspace" />
 		
