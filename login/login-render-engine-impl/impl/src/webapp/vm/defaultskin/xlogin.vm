@@ -7,7 +7,17 @@
         <link href="${pageSkinRepo}/${pageSkin}/tool.css" type="text/css" rel="stylesheet" media="all" />
         <script src="/library/js/modernizr.js$!{portalCDNQuery}"></script>
         <script src="/library/js/headscripts.js$!{portalCDNQuery}"></script>
- 
+        <style>
+            .portalBody {
+                display: flex;
+                align-items: center;
+                min-height: 90vh;
+                margin: 0;
+            }
+            #sakai-login-dialog {
+                width: 100%;
+            }
+        </style>
     </head>
     <body class="portalBody Mrphs-portalBody">
         <div id="sakai-login-dialog" class="modal position-static d-block">
