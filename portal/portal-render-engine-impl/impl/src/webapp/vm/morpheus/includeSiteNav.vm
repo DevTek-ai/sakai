@@ -223,7 +223,7 @@
                     aria-expanded="false" 
                     aria-controls="project-pages-${safeSiteId}">
                 <div class="d-flex me-auto rounded-end">
-                    <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                     <span class="me-2">Schools</span>
                 </div>
               <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -269,7 +269,7 @@
                     aria-expanded="false" 
                     aria-controls="admin-pages-${safeSiteId}">
                 <div class="d-flex me-auto rounded-end">
-                    <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                     <span class="me-2">Other</span>
                 </div>
               <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -432,4 +432,141 @@
         });
     });
 </script>
+
+<script>
+
+    // focus the current tool on load and prepare site description popovers
+
+    window.addEventListener('load', () => {
+
+        document.querySelector('.selected-page')?.scrollIntoView({behavior:'auto', block: 'center'});
+
+
+
+        // put the focus back on the portal wrapper so that keyboard navigation works
+
+        setTimeout(function() {
+
+            // Preserve focus on login fields if they're currently active
+
+            if (!["eid", "pw"].includes(document.activeElement?.id)) {
+
+                document.querySelector('.Mrphs-portalWrapper').focus();
+
+            }
+
+        }, 50);
+
+
+
+        [...document.querySelectorAll('[data-bs-toggle="popover"]')].forEach((el) => {
+
+            let opts = {
+
+                animation: false,
+
+            };
+
+            if (el.hasAttribute('data-bs-content-id')) {
+
+            opts.content = document.getElementById(el.getAttribute('data-bs-content-id')).innerHTML;
+
+            opts.html = true;
+
+                new bootstrap.Popover(el, opts);
+
+            }
+
+        });
+
+
+
+        // Handle chevron icon toggle for dropdown buttons
+
+        const collapsibleButtons = document.querySelectorAll('[data-bs-toggle="collapse"]');
+
+       
+
+        // Initialize icons based on expanded state
+
+        collapsibleButtons.forEach(button => {
+
+            const chevronIcon = button.querySelector('.bi-chevron-right');
+
+            if (chevronIcon) {
+
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+                if (isExpanded) {
+
+                    chevronIcon.classList.remove('bi-chevron-right');
+
+                    chevronIcon.classList.add('bi-chevron-down');
+
+                }
+
+            }
+
+        });
+
+       
+
+        // Add event listeners to toggle icons on click
+
+        collapsibleButtons.forEach(button => {
+
+            button.addEventListener('click', function() {
+
+                const chevronIcon = this.querySelector('.bi');
+
+                if (chevronIcon) {
+
+                    if (chevronIcon.classList.contains('bi-chevron-right')) {
+
+                        chevronIcon.classList.remove('bi-chevron-right');
+
+                        chevronIcon.classList.add('bi-chevron-down');
+
+                    } else {
+
+                        chevronIcon.classList.remove('bi-chevron-down');
+
+                        chevronIcon.classList.add('bi-chevron-right');
+
+                    }
+
+                }
+
+            });
+
+        });
+
+    });
+
+   
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // Select all elements containing page titles
+
+        const pageTitleElements = document.querySelectorAll('.course-page-title');
+
+
+
+        pageTitleElements.forEach(element => {
+
+            const originalText = element.textContent.trim();
+
+            if (originalText.length > 10) {
+
+                element.textContent = originalText.substring(0, 10) + '...';
+
+            }
+
+        });
+
+    });
+
+</script>
+
 <!-- END VM includeSiteNav.vm -->
