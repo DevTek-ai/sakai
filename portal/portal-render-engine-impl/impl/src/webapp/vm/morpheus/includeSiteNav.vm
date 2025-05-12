@@ -1,4 +1,4 @@
-#macro(siteListItem $type $site $isExpanded)
+#macro(siteListItem $type $site $isExpanded $userSchoolId)
 
     ## Remove those special site chars. They don't play well with html attributes.
     #set ($safeSiteId = $site.id.replace("!", "").replace("~", "").replace(".",""))
@@ -112,12 +112,23 @@
         
         ## Display regular pages first
         #foreach ($page in $regularPages)
-            #if ($site.isCurrent)
+            #if ($userSchoolId != "" && $page.title == "Dept Setup")
                 #set ($pageUrl = $page.resetUrl)
-            #else
-                #set ($pageUrl = $page.url)
+                #if ($site.isCurrent)
+                    #set ($pageUrl = $page.resetUrl)
+                #else
+                    #set ($pageUrl = $page.url)
+                #end
+                #pageListItem ($page, $pageUrl, "${page.icon}", 4)
+            #elseif ($page.title != "Dept Setup")
+                #set ($pageUrl = $page.resetUrl)
+                #if ($site.isCurrent)
+                    #set ($pageUrl = $page.resetUrl)
+                #else
+                    #set ($pageUrl = $page.url)
+                #end
+                #pageListItem ($page, $pageUrl, "${page.icon}", 4)
             #end
-            #pageListItem ($page, $pageUrl, "${page.icon}", 4)
         #end
         
         ## If we have course pages, create a collapsible section for them
@@ -177,7 +188,7 @@
                         aria-controls="dept-pages-${safeSiteId}">
                     <div class="d-flex me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
-                        <span class="me-2">Department</span>
+                        <span class="me-2">Departments</span>
                     </div>
                     <i class="bi bi-chevron-right" aria-hidden="true"></i>
                 </button>
@@ -215,8 +226,9 @@
             </li>
         #end
         ## If we have project pages, create a collapsible section for them
-        #if ($hasProjectPages)
-        <li class="nav-item project-pages-container">
+       #if ($hasProjectPages)
+    <li class="nav-item project-pages-container">
+        #if ($userSchoolId == "")
             <button class="btn btn-nav w-100 ps-4 d-flex text-start align-items-center new-dropdowns" 
                     data-bs-toggle="collapse" 
                     data-bs-target="#project-pages-${safeSiteId}" 
@@ -226,41 +238,42 @@
                     <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                     <span class="me-2">Schools</span>
                 </div>
-              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
             </button>
-            <div class="collapse" id="project-pages-${safeSiteId}">
-                <ul class="nav flex-column">
-                    #foreach ($page in $projectPages)
-                        <li class="nav-item">
-                                 <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#project-page-${safeSiteId}-${velocityCount}" 
-                        aria-expanded="false" 
-                        aria-controls="project-page-${safeSiteId}-${velocityCount}">
-                    <div class="d-flex me-auto rounded-end">
-                        <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
-                        <span class="me-2 project-page-title">${page.title}</span>
-                    </div>
-                   <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                </button>
-                <div class="collapse" id="project-page-${safeSiteId}-${velocityCount}">
-                                <ul class="nav flex-column">
-                                    #foreach ($page_s in $page.pages)
-                                        #if ($site.isCurrent)
-                                            #set ($pageUrl = $page_s.resetUrl)
-                                        #else
-                                            #set ($pageUrl = $page_s.url)
-                                        #end
-                                        #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
-                                    #end
-                                </ul>
-                                </div>
-                            </li>
-                    #end
-                </ul>
-            </div>
-        </li>
         #end
+        <div class="collapse #if($userSchoolId != '') show #end" id="project-pages-${safeSiteId}">
+            <ul class="nav flex-column">
+                #foreach ($page in $projectPages)
+                    <li class="nav-item">
+                        <button class="btn btn-nav w-100 d-flex ps-4 text-start align-items-center new-dropdowns" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#project-page-${safeSiteId}-${velocityCount}" 
+                                aria-expanded="false" 
+                                aria-controls="project-page-${safeSiteId}-${velocityCount}">
+                            <div class="d-flex me-auto rounded-end">
+                                <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
+                                <span class="me-2 project-page-title">${page.title}</span>
+                            </div>
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </button>
+                        <div class="collapse" id="project-page-${safeSiteId}-${velocityCount}">
+                            <ul class="nav flex-column">
+                                #foreach ($page_s in $page.pages)
+                                    #if ($site.isCurrent)
+                                        #set ($pageUrl = $page_s.resetUrl)
+                                    #else
+                                        #set ($pageUrl = $page_s.url)
+                                    #end
+                                    #pageListItem ($page_s, $pageUrl, "${page_s.icon}", 5)
+                                #end
+                            </ul>
+                        </div>
+                    </li>
+                #end
+            </ul>
+        </div>
+    </li>
+#end
         #if ($hasAdminPages)
           <li class="nav-item admin-pages-container">
             <button class="btn btn-nav w-100 ps-4 d-flex text-start align-items-center new-dropdowns" 
@@ -358,14 +371,14 @@
         #if (${userIsLoggedIn})
             <div class="sites-section">
                 <ul class="mb-0">
-                    #siteListItem("home", $sidebarSites.homeSite, false)
+                    #siteListItem("home", $sidebarSites.homeSite, false, $sidebarSites.userSchoolId)
                 </ul>
             </div>
             <div class="sites-section pinned-site-section d-none">
                 <h3 class="sites-section-heading #if (! $showSiteLabels) d-none #end">${rloader.sitenav_title_pinned}</h3>
                 <ul id="pinned-site-list" class="mb-0 #if ($sidebarSites.pinnedSites.empty)d-none#end">
                     #foreach ($site in $sidebarSites.pinnedSites)
-                        #siteListItem("pinned", $site, false)
+                        #siteListItem("pinned", $site, false, "")
                     #end
                 </ul>
                 #if (${showSiteLabels})
@@ -378,7 +391,7 @@
                 <h3 class="sites-section-heading #if (! $showSiteLabels) d-none #end">${rloader.sitenav_title_recent}</h3>
                 <ul id="recent-site-list" class="mb-0">
                     #foreach ($site in $sidebarSites.recentSites)
-                        #siteListItem("recent", $site, false)
+                        #siteListItem("recent", $site, false , "")
                     #end
                 </ul>
             </div>
@@ -387,7 +400,7 @@
                 <div class="sites-section">
                     <h3 class="visually-hidden sites-section-heading">${rloader.sitenav_title_current}</h3>
                     <ul class="pt-2 mb-0">
-                        #siteListItem("gateway", $sidebarSites.gatewaySite, true)
+                        #siteListItem("gateway", $sidebarSites.gatewaySite, true, "")
                     </ul>
                 </div>
             #end

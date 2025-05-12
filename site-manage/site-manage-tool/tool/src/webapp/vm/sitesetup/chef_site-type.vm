@@ -19,7 +19,7 @@
         sakai.siteTypeSetup()
     });
 </script>
-<div class ="portletBody">
+<div class ="portletBody d-none">
 
     <h3>
         $tlang.getString("sitetype.crenewsit")
@@ -315,3 +315,17 @@
 </div>  
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("typeform");
+        if (form) {
+            // Explicitly set the correct value for the "option" field
+            const optionInput = document.querySelector('input[name="option"]');
+            if (optionInput) {
+                optionInput.value = "siteType"; // Set to the correct value for "Continue"
+            }
+            // Submit the form
+            form.submit();
+        }
+    });
+</script>

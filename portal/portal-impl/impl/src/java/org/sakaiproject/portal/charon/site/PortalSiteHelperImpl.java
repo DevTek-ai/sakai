@@ -44,6 +44,7 @@ import org.sakaiproject.thread_local.api.ThreadLocalManager;
 import org.sakaiproject.tool.api.*;
 import org.sakaiproject.user.api.Preferences;
 import org.sakaiproject.user.api.PreferencesService;
+import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ArrayUtil;
@@ -387,6 +388,11 @@ public class PortalSiteHelperImpl implements PortalSiteHelper {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             List<Map<String, Object>> pinnedSiteMaps = getSiteMaps(pinnedSites, currentSiteId, userId, true, false, true);
+
+            String user_school_id = getStringAttribute(userDirectoryService.getCurrentUser().getProperties().getProperty("devtek-school-id"),"");
+            // String schoolId = user.getEid();
+
+            contextSites.put("userSchoolId", user_school_id);
 
             contextSites.put("homeSite", getSiteMap(getSite(siteService.getUserSiteId(userId)), currentSiteId, userId, false, false, true, pinnedSiteMaps));
 
@@ -1490,5 +1496,12 @@ public class PortalSiteHelperImpl implements PortalSiteHelper {
     public boolean isJoinable(String siteId, String userId) {
         Site site = getSite(siteId);
         return site != null && site.isJoinable() && site.getUserRole(userId) == null;
+    }
+
+    public String getStringAttribute(Object input, String defaultValue) {
+        if (input == null || input.toString().isEmpty()) {
+            return defaultValue;
+        }
+        return input.toString();
     }
 }
