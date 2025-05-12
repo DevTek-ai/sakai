@@ -179,18 +179,15 @@
 		position: fixed;
 	}
 	.page-header
-	{
-		margin: calc(#{$standard-spacing} + 5px) 0; // additional 5px for equallying the header text descenders
-		padding: 0 0 $standard-spacing 0;
-		border-bottom: 1px solid var(--tool-border-color);
-
-		h1, h2, h3
-		{
-			margin: 0;
-			padding: 0;
-			line-height: 1;
-		}
-	}
+    {
+        margin: calc(5px + 0px) 0; // additional 5px for equallying the header text descenders
+        h1, h2, h3
+        {
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+    }
 }
 
 .itemNav{
