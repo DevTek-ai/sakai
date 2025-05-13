@@ -133,6 +133,7 @@
 						#foreach ($site in $sites)
 							#set ($siteCount=$siteCount + 1)
 							#set ($properties = $site.getProperties())
+							#set ($term_ = "")
 
 								<td headers="checkbox" class="screenOnly attach">
 									#if ($service.allowUpdateSite($site.Id))
@@ -167,8 +168,7 @@
 							          --#end
 							</span>
 							</td>
-
-							</tr>
+						</tr>
 						#end
 					</tbody>
 
