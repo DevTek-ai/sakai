@@ -218,24 +218,54 @@ function removeOptionalAttributeBlock(elem) {
 
 				#if ($incType)
 					<div class="mb-3 row">
-						<label class="col-sm-2 col-form-label" for="type">
+						<label class="form-control-label col-sm-2" for="type">
 							$tlang.getString("usecre.typ")
 						</label>
 						<div class="col-sm-3">
-							#if ($service.allowUpdateUserType($user.Id) || !$user)
-								#if($userTypes)
-									<select class="form-control" name="type" id="type">
-									#foreach ( $userType in $userTypes )
-										<option value="$formattedText.escapeHtml($userType)" #if($user.Type==$userType)selected#end>$formattedText.escapeHtml($userType)</option>
-									#end
-									</select>
-								#else
-									<input class="form-control sakai-glow" type="text" name="type" id="type" #if($user)value="$formattedText.escapeHtml($user.Type)"#elseif($valueType)value="$formattedText.escapeHtml($valueType)"#end />
-								#end
-							#else
-								#if($user)$formattedText.escapeHtml($user.Type)#elseif($valueType)$formattedText.escapeHtml($valueType)#end
-							#end
-						</div>
+					<select class="form-control sakai-glow" name="typeSelector" id="typeSelector" onchange="updateTypeValue(this.value);">
+						<option value="admin" #if($type == "admin_maintain")selected#end>Admin</option>
+						<option value="principal" #if($type == "principal_maintain")selected#end>Principal</option>
+						<option value="teacher" #if($type == "teacher_registered")selected#end>Teacher</option>
+						<option value="student" #if($type == "student_registered")selected#end>Student</option>
+						<option value="parent" #if($type == "parent_guest")selected#end>Parent</option>
+					</select>
+
+							<!-- Hidden fields to store the full backend type for two different tables-->
+					<input type="hidden" name="type" id="type-hidden" value="$type" />
+					<input type="hidden" name="devtek-user-type" id="devtek-user-type" value="$type" class="form-control"/>  
+
+					<!-- Fixed name/value pair for storing to properties -->
+					<input type="hidden" name="new_name" id="new_name" value="devtek-user-type" class="form-control"/>
+					<input type="hidden" name="new_value" id="new_value" value="admin" class="form-control sakai-glow"/>
+
+					<script>
+						function updateTypeValue(value) {
+							const map = {
+								"admin": "maintain",
+								"principal": "maintain",
+								"teacher": "registered",
+								"student": "registered",
+								"parent": "guest"
+							};
+							const typeValue = map[value] || "";
+
+							document.getElementById("type-hidden").value = typeValue;
+							document.getElementById("devtek-user-type").value = typeValue;
+
+						}
+
+
+						// Set both hidden fields correctly on page load
+						window.addEventListener("DOMContentLoaded", function () {
+							// Get the currently selected option value from the dropdown
+							const selector = document.getElementById("typeSelector");
+							if (selector) {
+								updateTypeValue(selector.value);
+							}
+						});
+					</script>
+				</div>
+
 					</div>
 				#end
 

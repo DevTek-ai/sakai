@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -932,21 +933,35 @@ public class UsersAction extends PagedResourceActionII
 	public void doSave(RunData data, Context context)
 	{
 		SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+        String[] names = data.getParameters().getStrings("new_name");
+        String[] values = data.getParameters().getStrings("new_value");
+
+		if (names != null && values != null) {
+                int length = Math.min(names.length, values.length); // Avoid IndexOutOfBounds if mismatched
+                Map<String, String> props = new HashMap<>();
+                for (int i = 0; i < length; i++) {
+                    String name = getStringAttribute(names[i], "");
+                    String value = getStringAttribute(values[i], "");
+                    if (name != null && !name.isEmpty() && value != null) {
+                        props.put(name, value);
+                    }
+                }
+                if (!props.isEmpty())
+                    state.setAttribute("site-custom-user-props", props);
+            }
 		
 		if (!"POST".equals(data.getRequest().getMethod())) {
 			return;
 		}
-
 		// read the form - if rejected, leave things as they are
 		if (!readUserForm(data, state)) return;
-
 
 		
 		// commit the change
 		UserEdit edit = (UserEdit) state.getAttribute("user");
 		if (edit != null)
 		{
-			
+			readCustomPropertiesFromState(state, edit);
 			//Check if the email is duplicated
 			boolean allowEmailDuplicates = ServerConfigurationService.getBoolean("user.email.allowduplicates",true);
 			
@@ -972,7 +987,10 @@ public class UsersAction extends PagedResourceActionII
 		if (user == null)
 		{
 			user = (User) state.getAttribute("newuser");
+			
+
 		}
+		readCustomPropertiesFromState(state, (UserEdit) user);
 
 		// cleanup
 		state.removeAttribute("user");
@@ -986,7 +1004,6 @@ public class UsersAction extends PagedResourceActionII
 
 		// return to main mode
 		state.removeAttribute("mode");
-
 		if ((user != null) && ((Boolean) state.getAttribute("create-login")).booleanValue())
 		{
 			if (isValidatedWithAccountValidator(state))
@@ -1014,10 +1031,29 @@ public class UsersAction extends PagedResourceActionII
 
 				// redirect to home (on next build)
 				state.setAttribute("redirect", "");
+				
 			}
 		}
 
 	} // doSave
+
+
+	public String getStringAttribute(Object input, String defaultValue) {
+        if (input == null || input.toString().isEmpty()) {
+            return defaultValue;
+        }
+        return input.toString();
+    }
+
+	
+    @SuppressWarnings("unchecked")
+	private void readCustomPropertiesFromState(SessionState state, UserEdit site) {
+        Map<String, String> siteCustomProps = (Map<String, String>) state.getAttribute("site-custom-user-props");
+        if (siteCustomProps != null && !siteCustomProps.isEmpty()) {
+            siteCustomProps.forEach((key, value) ->
+                    site.getPropertiesEdit().addProperty(key, getStringAttribute(value, "")));
+        }
+    }
 
 	/**
 	 * doCancel called when "eventSubmit_doCancel" is in the request parameters to cancel user edits
@@ -1476,7 +1512,7 @@ public class UsersAction extends PagedResourceActionII
 						}
 					}
 				}
-
+				readCustomPropertiesFromState(state, (UserEdit) newUser);
 				// put the user in the state
 				state.setAttribute("newuser", newUser);
 			}
