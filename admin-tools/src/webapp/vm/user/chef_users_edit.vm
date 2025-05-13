@@ -222,13 +222,16 @@ function removeOptionalAttributeBlock(elem) {
 							$tlang.getString("usecre.typ")
 						</label>
 						<div class="col-sm-3">
+					#set($userType = $user.Properties.getProperty("devtek-user-type"))
 					<select class="form-control sakai-glow" name="typeSelector" id="typeSelector" onchange="updateTypeValue(this.value);">
-						<option value="admin" #if($type == "admin_maintain")selected#end>Admin</option>
-						<option value="principal" #if($type == "principal_maintain")selected#end>Principal</option>
-						<option value="teacher" #if($type == "teacher_registered")selected#end>Teacher</option>
-						<option value="student" #if($type == "student_registered")selected#end>Student</option>
-						<option value="parent" #if($type == "parent_guest")selected#end>Parent</option>
+						<option value="admin" #if($type == "admin_maintain" || ($user && $user.Properties.getProperty("devtek-user-type") == "admin_maintain"))selected#end>Admin</option>
+						<option value="principal" #if($type == "principal_maintain" || ($user && $user.Properties.getProperty("devtek-user-type") == "principal_maintain"))selected#end>Principal</option>
+						<option value="teacher" #if($type == "teacher_registered" || ($user && $user.Properties.getProperty("devtek-user-type") == "teacher_registered"))selected#end>Teacher</option>
+						<option value="student" #if($type == "student_registered" || ($user && $user.Properties.getProperty("devtek-user-type") == "student_registered"))selected#end>Student</option>
+						<option value="parent" #if($type == "parent_guest" || ($user && $user.Properties.getProperty("devtek-user-type") == "parent_guest"))selected#end>Parent</option>
 					</select>
+
+
 
 							<!-- Hidden fields to store the full backend type for two different tables-->
 					<input type="hidden" name="type" id="type-hidden" value="$type" />
@@ -236,7 +239,7 @@ function removeOptionalAttributeBlock(elem) {
 
 					<!-- Fixed name/value pair for storing to properties -->
 					<input type="hidden" name="new_name" id="new_name" value="devtek-user-type" class="form-control"/>
-					<input type="hidden" name="new_value" id="new_value" value="admin" class="form-control sakai-glow"/>
+					<input type="hidden" name="new_value" id="new_value" value="${type}" class="form-control sakai-glow"/>
 
 					<script>
 						function updateTypeValue(value) {
@@ -251,6 +254,9 @@ function removeOptionalAttributeBlock(elem) {
 
 							document.getElementById("type-hidden").value = typeValue;
 							document.getElementById("devtek-user-type").value = typeValue;
+
+							    const fullTypeValue = value + "_" + typeValue;
+    							document.getElementById("new_value").value = fullTypeValue;
 
 						}
 

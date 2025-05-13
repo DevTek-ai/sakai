@@ -862,7 +862,7 @@ public class UsersAction extends PagedResourceActionII
 		// get the user
 		try
 		{
-			UserEdit user = userDirectoryService.editUser(id);
+			UserEdit user = userDirectoryService.editUser(id); 
 			state.setAttribute("user", user);
 			state.setAttribute("mode", "edit");
 		}
