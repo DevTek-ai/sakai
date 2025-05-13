@@ -1490,6 +1490,7 @@ public class UsersAction extends PagedResourceActionII
 				}
 				else
 				{
+					readCustomPropertiesFromState(state, properties);
 					newUser = userDirectoryService.addUser(id, eid, firstName, lastName, email, pw, type, properties);
 
 					if (securityService.isSuperUser()) {
@@ -2048,4 +2049,12 @@ public class UsersAction extends PagedResourceActionII
         }
         return userTypes;
     }
+
+	private void readCustomPropertiesFromState(SessionState state, ResourcePropertiesEdit site) {
+		Map<String, String> siteCustomProps = (Map<String, String>) state.getAttribute("site-custom-user-props");
+		if (siteCustomProps != null && !siteCustomProps.isEmpty()) {
+			siteCustomProps.forEach((key, value) ->
+					site.addProperty(key, getStringAttribute(value, "")));//.getPropertiesEdit().addProperty(key, getStringAttribute(value, "")));
+		}
+	}
 }
