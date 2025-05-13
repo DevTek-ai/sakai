@@ -83,7 +83,6 @@
 					<th id="Email">$tlang.getString("useconrem.ema")</th>
 					<th id="Type" class="d-none d-sm-table-cell">$tlang.getString("usecre.typ")</th>
 					<th id="Status" class="d-none d-sm-table-cell">$tlang.getString("usecre.status")</th>
-					<th id="Id" class="d-none d-sm-table-cell">$tlang.getString("useconrem.useuid")</th>
 				</tr>
 	#foreach ($user in $users)
 				<tr>
@@ -100,7 +99,6 @@
 					<td headers="Email">$formattedText.escapeHtml($user.Email)</td>
 					<td headers="Type" class="d-none d-sm-table-cell">$formattedText.escapeHtml($user.Type)</td>
 					<td headers="Status" class="d-none d-sm-table-cell">#if($!user.Properties.getProperty("disabled")) $tlang.getString("disabled") #else $tlang.getString("enabled") #end</td>
-					<td headers="Id" class="d-none d-sm-table-cell">$formattedText.escapeHtml($user.Id)
 					</td>
 				</tr>
 	#end
