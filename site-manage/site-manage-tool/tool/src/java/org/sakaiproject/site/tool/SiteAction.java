@@ -427,6 +427,7 @@ public class SiteAction extends PagedResourceActionII {
     private static final String STATE_SITE_ZIPCODE = "devtek-site-zipcode";
 
     private static final String STATE_SITE_DEPT_PARENT = "devtek-site-parent";
+    private static final String STATE_SITE_DEPT_PARENT_SAKAI = "sakai:parent-id";
     private static final String STATE_SITE_DEPT_ADMIN = "devtek-site-admin";
 
     public static final String SITE_DEPARTMENT_TYPE = "devtek-department-type";
@@ -2438,7 +2439,7 @@ public class SiteAction extends PagedResourceActionII {
                     context.put(STATE_SITE_ZIPCODE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_ZIPCODE), ""));
                     context.put(STATE_SITE_STATE, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_STATE), ""));
                     context.put(STATE_SITE_CITY, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_CITY), ""));
-                    context.put(STATE_SITE_DEPT_PARENT, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_PARENT), ""));
+                    context.put(STATE_SITE_DEPT_PARENT, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_PARENT_SAKAI), ""));
                     context.put(STATE_SITE_DEPT_ADMIN, getStringAttribute(site.getPropertiesEdit().get(STATE_SITE_DEPT_ADMIN), ""));
                 } else {
                     context.put(STATE_SITE_ADDRESS, "");
