@@ -580,7 +580,6 @@ public class SiteAddParticipantHandler {
 
 
             }
-
             if (site != null && site.getId() != null) {
                 try {
                     User user = userDirectoryService.getUserByEid(eId);
@@ -594,8 +593,6 @@ public class SiteAddParticipantHandler {
                     throw new RuntimeException(e);
                 }
             }
-
-
         }
 
 
