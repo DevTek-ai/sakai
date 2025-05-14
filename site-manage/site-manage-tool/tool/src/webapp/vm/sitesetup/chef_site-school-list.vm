@@ -196,11 +196,13 @@
 							</td>
 							<td headers="devtek-students" class="d-none d-sm-table-cell">
 								#set($term = $properties.getProperty('devtek-students'))
-								#if($term && $term != "")$!term#else--#end
+								##if($term && $term != "")$!term#else--#end
+								--
 							</td>
 							<td headers="devtek-teachers" class="d-none d-sm-table-cell">
 								#set($term = $properties.getProperty('devtek-teachers'))
-								#if($term && $term != "")$!term#else--#end
+								##if($term && $term != "")$!term#else--#end
+								--
 							</td>
 
 							</tr>
