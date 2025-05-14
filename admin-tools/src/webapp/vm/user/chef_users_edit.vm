@@ -53,7 +53,7 @@ function removeOptionalAttributeBlock(elem) {
                     <span class="reqStarInline">*</span> $tlang.getString("usecre.instruc")
                 </div>
 
-				<div class="mb-3 row">
+				<div class="mb-3 d-none row">
 					<label class="col-sm-2 col-form-label" #if(!$user) for="user_eid" #end>
 						<span class="red">*</span> $tlang.getString("useconrem.useid")
 					</label>
@@ -77,34 +77,8 @@ function removeOptionalAttributeBlock(elem) {
 				</div>
 
 				<div class="mb-3 row">
-					<label class="col-sm-2 col-form-label" for="first-name">
-						$tlang.getString("usecre.firnam")
-					</label>
-					<div class="col-sm-3">
-						#if ($service.allowUpdateUserName($user.Id) || !$user)
-							<input class="form-control sakai-glow" type="text" name="first-name" id="first-name" placeholder="$tlang.getString("usecre.firnam.placeholder")" autocomplete="given-name" #if($user)value="$formattedText.escapeHtml($user.FirstName)"#elseif($valueFirstName)value="$formattedText.escapeHtml($valueFirstName)"#end />
-						#else
-							#if($user)$formattedText.escapeHtml($user.FirstName)#elseif($valueFirstName)$formattedText.escapeHtml($valueFirstName)#end
-						#end
-					</div>
-				</div>
-
-				<div class="mb-3 row">
-					<label class="col-sm-2 col-form-label" for="last-name">
-						$tlang.getString("usecre.lasnam")
-					</label>
-					<div class="col-sm-3">
-						#if ($service.allowUpdateUserName($user.Id) || !$user)
-							<input class="form-control sakai-glow" type="text" name="last-name" id="last-name" placeholder="$tlang.getString("usecre.lasnam.placeholder")" autocomplete="family-name" #if($user)value="$formattedText.escapeHtml($user.LastName)"#elseif($valueLastName)value="$formattedText.escapeHtml($valueLastName)"#end />
-						#else
-							#if($user)$formattedText.escapeHtml($user.LastName)#elseif($valueLastName)$formattedText.escapeHtml($valueLastName)#end
-						#end
-					</div>
-				</div>
-
-				<div class="mb-3 row">
 					<label class="col-sm-2 col-form-label" for="email">
-						$tlang.getString("useconrem.ema")
+						<span class="red">*</span> $tlang.getString("useconrem.ema")
 					</label>
 					<div class="col-sm-3">
 						#if ($service.allowUpdateUserEmail($user.Id) || !$user)
@@ -120,6 +94,34 @@ function removeOptionalAttributeBlock(elem) {
 						</div>
 					</div>
 				</div>
+
+				<div class="mb-3 row">
+					<label class="col-sm-2 col-form-label" for="first-name">
+						<span class="red">*</span> $tlang.getString("usecre.firnam")
+					</label>
+					<div class="col-sm-3">
+						#if ($service.allowUpdateUserName($user.Id) || !$user)
+							<input class="form-control sakai-glow" type="text" name="first-name" id="first-name" placeholder="$tlang.getString("usecre.firnam.placeholder")" autocomplete="given-name" #if($user)value="$formattedText.escapeHtml($user.FirstName)"#elseif($valueFirstName)value="$formattedText.escapeHtml($valueFirstName)"#end />
+						#else
+							#if($user)$formattedText.escapeHtml($user.FirstName)#elseif($valueFirstName)$formattedText.escapeHtml($valueFirstName)#end
+						#end
+					</div>
+				</div>
+
+				<div class="mb-3 row">
+					<label class="col-sm-2 col-form-label" for="last-name">
+						<span class="red">*</span> $tlang.getString("usecre.lasnam")
+					</label>
+					<div class="col-sm-3">
+						#if ($service.allowUpdateUserName($user.Id) || !$user)
+							<input class="form-control sakai-glow" type="text" name="last-name" id="last-name" placeholder="$tlang.getString("usecre.lasnam.placeholder")" autocomplete="family-name" #if($user)value="$formattedText.escapeHtml($user.LastName)"#elseif($valueLastName)value="$formattedText.escapeHtml($valueLastName)"#end />
+						#else
+							#if($user)$formattedText.escapeHtml($user.LastName)#elseif($valueLastName)$formattedText.escapeHtml($valueLastName)#end
+						#end
+					</div>
+				</div>
+
+			
 
 				#if ($incPw && !$providedUserType)
 					#if(!$!superUser)
@@ -140,7 +142,7 @@ function removeOptionalAttributeBlock(elem) {
 					#if ($service.allowUpdateUserPassword($user.Id) || !$user)
 						<div class="mb-3 row">
 							<label class="col-sm-2 col-form-label" for="user_pw">
-								$tlang.getString("usecre.crenewpass")
+								<span class="red">*</span> $tlang.getString("usecre.crenewpass")
 							</label>
 							<div class="col-sm-3">
 								<input class="form-control sakai-glow" type="password" name="pw" id="user_pw" placeholder="$tlang.getString("usecre.crenewpass.placeholder")" oninput="USER.validatePassword();" onkeyup="USER.verifyPasswordsMatch()" onblur="USER.displayStrengthInfo();USER.validatePassword();" onfocus="USER.displayStrengthInfo();" autocomplete="new-password" />
@@ -195,7 +197,7 @@ function removeOptionalAttributeBlock(elem) {
 
 						<div class="mb-3 row">
 							<label class="col-sm-2 col-form-label" for="user_pw0">
-								$tlang.getString("usecre.vernewpass")
+								<span class="red">*</span> $tlang.getString("usecre.vernewpass")
 							</label>
 							<div class="col-sm-3">
 								<input class="form-control sakai-glow" type="password" name="pw0" id="user_pw0" placeholder="$tlang.getString("usecre.vernewpass.placeholder")" onkeyup="USER.verifyPasswordsMatch()" onblur="USER.verifyPasswordsMatch();" autocomplete="new-password" />
@@ -218,7 +220,7 @@ function removeOptionalAttributeBlock(elem) {
 
 				#if ($incType)
 					<div class="mb-3 row">
-						<label class="form-control-label col-sm-2" for="type">
+						<label class="col-sm-2" for="type">
 							$tlang.getString("usecre.typ")
 						</label>
 						<div class="col-sm-3">
@@ -230,8 +232,6 @@ function removeOptionalAttributeBlock(elem) {
 						<option value="student" #if($type == "student_registered" || ($user && $user.Properties.getProperty("devtek-user-type") == "student_registered"))selected#end>Student</option>
 						<option value="parent" #if($type == "parent_guest" || ($user && $user.Properties.getProperty("devtek-user-type") == "parent_guest"))selected#end>Parent</option>
 					</select>
-
-
 
 							<!-- Hidden fields to store the full backend type for two different tables-->
 					<input type="hidden" name="type" id="type-hidden" value="$type" />
@@ -255,13 +255,19 @@ function removeOptionalAttributeBlock(elem) {
 							document.getElementById("type-hidden").value = typeValue;
 							document.getElementById("devtek-user-type").value = typeValue;
 
-							    const fullTypeValue = value + "_" + typeValue;
-    							document.getElementById("new_value").value = fullTypeValue;
-
+							const fullTypeValue = value + "_" + typeValue;
+							document.getElementById("new_value").value = fullTypeValue;
+							
+							// Show or hide grade level dropdown based on student selection
+							const gradeLevelDiv = document.getElementById("grade-level-container");
+							if (value === "student") {
+								gradeLevelDiv.style.display = "flex";  // Use flex to match other rows
+							} else {
+								gradeLevelDiv.style.display = "none";
+							}
 						}
 
-
-						// Set both hidden fields correctly on page load
+						// Set both hidden fields correctly on page load and handle initial display
 						window.addEventListener("DOMContentLoaded", function () {
 							// Get the currently selected option value from the dropdown
 							const selector = document.getElementById("typeSelector");
@@ -271,9 +277,42 @@ function removeOptionalAttributeBlock(elem) {
 						});
 					</script>
 				</div>
-
+					</div>
+					
+					<!-- Grade Level Dropdown for Students -->
+					<div class="mb-3 row" id="grade-level-container" style="display: none;">
+						<label class="col-sm-2 col-form-label" for="gradeSelector">
+							Grade Level
+						</label>
+						<div class="col-sm-3">
+							#set($userGradeLevel = $user.Properties.getProperty("devtek-grade-level"))
+							<select class="form-control sakai-glow" name="gradeSelector" id="gradeSelector" onchange="updateGradeLevel(this.value);">
+								#foreach($grade in [1..12])
+									<option value="$grade" #if($userGradeLevel == "$grade")selected#end>Grade $grade</option>
+								#end
+							</select>
+							
+							<!-- Hidden fields for storing grade level -->
+							<input type="hidden" name="new_name" value="devtek-grade-level" class="form-control"/>
+							<input type="hidden" name="new_value" id="grade_new_value" value="$!userGradeLevel" class="form-control sakai-glow"/>
+							
+							<script>
+								function updateGradeLevel(value) {
+									document.getElementById("grade_new_value").value = value;
+								}
+								
+								// Set grade level value correctly on page load
+								window.addEventListener("DOMContentLoaded", function() {
+									const gradeSelector = document.getElementById("gradeSelector");
+									if (gradeSelector) {
+										updateGradeLevel(gradeSelector.value);
+									}
+								});
+							</script>
+						</div>
 					</div>
 				#end
+
 
 				<div class="mb-3 row">
 					<label class="col-sm-2 col-form-label" for="disabled">
