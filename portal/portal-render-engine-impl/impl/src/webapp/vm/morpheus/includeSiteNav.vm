@@ -155,7 +155,7 @@
                         data-bs-custom-class="sidebar-tooltip"
                         data-bs-title="Courses">
 
-                    <div class="d-flex ps-3  me-auto rounded-end">
+                    <div class="d-flex   me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                         <span class="me-2">Courses</span>
                     </div>
@@ -177,7 +177,7 @@
                                 aria-expanded="false" 
                                 aria-controls="course-page-${safeSiteId}-${velocityCount}"
                                 data-original-title="${page.title}">
-                            <div class="d-flex ps-3  me-auto rounded-end">
+                            <div class="d-flex   me-auto rounded-end">
                                 <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                                 <span class="me-2 course-page-title">${page.title}</span>
                             </div>
@@ -213,7 +213,7 @@
                         data-bs-custom-class="sidebar-tooltip"
                         data-bs-title="Departments">
 
-                    <div class="d-flex ps-3  me-auto rounded-end">
+                    <div class="d-flex   me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                         <span class="me-2">Departments</span>
                     </div>
@@ -229,7 +229,7 @@
                                         aria-expanded="false"
                                         data-bs-custom-class="sidebar-tooltip"
                                         aria-controls="dept-page-${safeSiteId}-${velocityCount}">
-                                    <div class="d-flex ps-3  me-auto rounded-end">
+                                    <div class="d-flex   me-auto rounded-end">
                                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                                         <span class="me-2 dept-page-title">${page.title}</span>
                                     </div>
@@ -265,7 +265,7 @@
                     data-bs-custom-class="sidebar-tooltip"
                     data-bs-title="Schools">
 
-                <div class="d-flex ps-3  me-auto rounded-end">
+                <div class="d-flex   me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                     <span class="me-2">Schools</span>
                 </div>
@@ -276,13 +276,13 @@
             <ul class="nav flex-column">
                 #foreach ($page in $projectPages)
                     <li class="nav-item">
-                        <button class="btn btn-nav w-100 d-flex ps-4 text-start align-items-center new-dropdowns" 
+                        <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns" 
                                 data-bs-toggle="collapse" 
                                 data-bs-target="#project-page-${safeSiteId}-${velocityCount}" 
                                 aria-expanded="false" 
                                  data-bs-custom-class="sidebar-tooltip"
                                 aria-controls="project-page-${safeSiteId}-${velocityCount}">
-                            <div class="d-flex ps-3 me-auto rounded-end">
+                            <div class="d-flex  me-auto rounded-end">
                                 <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                                 <span class="me-2 project-page-title">${page.title}</span>
                             </div>
@@ -316,7 +316,7 @@
                 data-bs-custom-class="sidebar-tooltip"
                 data-bs-title="Other Pages">
 
-                <div class="d-flex ps-3  me-auto rounded-end">
+                <div class="d-flex   me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                     <span class="me-2">Other</span>
                 </div>
@@ -334,7 +334,7 @@
                                 data-bs-custom-class="sidebar-tooltip"
                                 data-bs-title="${page.title}">
 
-                    <div class="d-flex ps-3  me-auto rounded-end">
+                    <div class="d-flex   me-auto rounded-end">
                         <i class="me-1 si si-sakai-preferences" aria-hidden="true"></i>
                         <span class="me-2 admin-page-title">${page.title}</span>
                     </div>
@@ -383,8 +383,8 @@
                 data-bs-toggle="tooltip" 
                 data-bs-placement="right" 
                 data-bs-title="${page.title}">
-            <div class="d-flex ps-3 text-start align-items-center">
-                <div class="d-flex ps-3 me-auto rounded-end">
+            <div class="d-flex  text-start align-items-center">
+                <div class="d-flex  me-auto rounded-end">
                     <i class="me-1 $!{icon}" aria-hidden="true"></i>
                     <span class="me-2">${page.title}</span>
                 </div>
