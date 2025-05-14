@@ -579,21 +579,23 @@ public class SiteAddParticipantHandler {
                 }
 
 
-            } else {
-                if (site != null && site.getId() != null) {
-                    try {
-                        User user = userDirectoryService.getUserByEid(eId);
-                        UserEdit userEdit = null;
-                        userEdit = userDirectoryService.editUser(user.getId());
-                        // Update properties
-                        userEdit.getPropertiesEdit().addProperty("devtek-school-id", site.getId());
-                        userDirectoryService.commitEdit(userEdit);
-                    } catch (UserNotDefinedException | UserPermissionException | UserLockedException |
-                             UserAlreadyDefinedException e) {
-                        throw new RuntimeException(e);
-                    }
+            }
+
+            if (site != null && site.getId() != null) {
+                try {
+                    User user = userDirectoryService.getUserByEid(eId);
+                    UserEdit userEdit = null;
+                    userEdit = userDirectoryService.editUser(user.getId());
+                    // Update properties
+                    userEdit.getPropertiesEdit().addProperty("devtek-school-id", site.getId());
+                    userDirectoryService.commitEdit(userEdit);
+                } catch (UserNotDefinedException | UserPermissionException | UserLockedException |
+                         UserAlreadyDefinedException e) {
+                    throw new RuntimeException(e);
                 }
             }
+
+
         }
 
 
