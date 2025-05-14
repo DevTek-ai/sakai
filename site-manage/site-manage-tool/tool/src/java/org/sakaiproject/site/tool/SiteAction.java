@@ -429,8 +429,9 @@ public class SiteAction extends PagedResourceActionII {
     private static final String STATE_SITE_DEPT_PARENT = "devtek-site-parent";
     private static final String STATE_SITE_DEPT_PARENT_SAKAI = "sakai:parent-id";
     private static final String STATE_SITE_DEPT_ADMIN = "devtek-site-admin";
+    private static final String PROP_DEVTEK_SCHOOL = "devtek-school-id";
 
-    public static final String SITE_DEPARTMENT_TYPE = "devtek-department-type";
+    public static final String PROP_DEVTEK_DEPARTMENT_TYPE = "devtek-department-type";
     public static final String IS_DISPLAY_ONLY_SCHOOL = "IS_DISPLAY_ONLY_SCHOOL";
     public static final String DEVTEK_DEPARTMENT_SCHOOL = "school";
 
@@ -1633,25 +1634,24 @@ public class SiteAction extends PagedResourceActionII {
                 context.put("portalUrl", portalUrl);
                 if ("school".equals(state.getAttribute("deptType"))) {
                     state.setAttribute("IS_DISPLAY_ONLY_SCHOOL", Boolean.TRUE);
-                }
-                else if("department".equals(state.getAttribute("deptType"))) {
+                } else if ("department".equals(state.getAttribute("deptType"))) {
                     state.setAttribute("IS_DISPLAY_ONLY_DEPARTMENT", Boolean.TRUE);
                 }
                 List<Site> allSites = prepPage(state);
 
                 for (Site _site : allSites) {
-                    String userId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-admin"), "") ;
+                    String userId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-admin"), "");
                     if (userId != null && !userId.isEmpty()) {
                         try {
-                            _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getFirstName() + " " + userDirectoryService.getUser(userId).getLastName(),""));
+                            _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getFirstName() + " " + userDirectoryService.getUser(userId).getLastName(), ""));
                         } catch (Exception e) {
                             // _site.getPropertiesEdit().addProperty("userName", getStringAttribute(userDirectoryService.getUser(userId).getDisplayName(),""));
                         }
                     }
-                    String siteId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-parent"), "") ;
+                    String siteId = getStringAttribute(_site.getPropertiesEdit().get("devtek-site-parent"), "");
                     if (siteId != null && !siteId.isEmpty()) {
                         try {
-                            _site.getPropertiesEdit().addProperty("parentTitle", getStringAttribute(siteService.getSite(siteId).getTitle(),""));
+                            _site.getPropertiesEdit().addProperty("parentTitle", getStringAttribute(siteService.getSite(siteId).getTitle(), ""));
                         } catch (Exception e) {
                             // _site.getPropertiesEdit().addProperty("parentTitle", "");
                         }
@@ -1720,9 +1720,9 @@ public class SiteAction extends PagedResourceActionII {
                     clearNewSiteStateParameters(state);
                 }
 
-                return (String) getContext(data).get("template") + 
-                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[66] : 
-                         ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[68] : TEMPLATE[0]));
+                return (String) getContext(data).get("template") +
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[66] :
+                                ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[68] : TEMPLATE[0]));
 
             case 1:
                 /*
@@ -1892,9 +1892,9 @@ public class SiteAction extends PagedResourceActionII {
                 siteInfo = (SiteInfo) state.getAttribute(STATE_SITE_INFO);
                 String siteType = (String) state.getAttribute(STATE_SITE_TYPE);
 
-               
+
                 context.put("deptType", state.getAttribute("deptType"));
-               
+
 
                 if (SiteTypeUtil.isCourseSite(siteType)) {
                     context.put("isCourseSite", Boolean.TRUE);
@@ -2323,12 +2323,22 @@ public class SiteAction extends PagedResourceActionII {
 
                 //Siraj Added code for users
 
-                List<User> allUsers = userDirectoryService.getUsers();
-                context.put("allusers", allUsers);
-                List<Site> SitesForDropdown = siteService.getSites(SelectionType.MEMBER, null, null, null, SortType.TITLE_ASC, null);
-                context.put("allsites", SitesForDropdown);
-                String schoolId =  getStringAttribute(userDirectoryService.getCurrentUser().getProperties().get("devtek-school-id"),"");
-                context.put("devtek-school-id",schoolId);
+                String schoolId = getStringAttribute(userDirectoryService.getCurrentUser().getProperties().get(PROP_DEVTEK_SCHOOL), "");
+
+                List<User> allSchoolUsers = userDirectoryService.getUsers();
+                allSchoolUsers = allSchoolUsers.stream()
+                        .filter(usr -> {
+                            String userSchoolId = usr.getProperties().getProperty(PROP_DEVTEK_SCHOOL);
+                            return userSchoolId != null && userSchoolId.equals(schoolId);
+                        })
+                        .collect(Collectors.toList());
+                context.put("allusers", allSchoolUsers);
+                Map<String, String> propertyCriteria = new HashMap<>();
+                propertyCriteria.put(PROP_DEVTEK_SCHOOL, schoolId);
+                List<Site> schoolDepatrments = siteService.getSites(SelectionType.MEMBER, null, null, propertyCriteria, SortType.TITLE_ASC, null);
+                context.put("allsites", schoolDepatrments);
+
+                context.put(PROP_DEVTEK_SCHOOL, schoolId);
 
                 if (displaySiteAlias) {
                     context.put(FORM_SITE_URL_BASE, getSiteBaseUrl());
@@ -2459,10 +2469,10 @@ public class SiteAction extends PagedResourceActionII {
                 MathJaxEnabler.addMathJaxSettingsToSiteInfoContext(context, site, state);
                 PortalNeochatEnabler.addToSiteInfoContext(context, site, state);
 
-                return (String) getContext(data).get("template") + 
-                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[67] : 
-                        ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[69] : TEMPLATE[13]));
-                case 14:
+                return (String) getContext(data).get("template") +
+                        ("school".equals(state.getAttribute("deptType")) ? TEMPLATE[67] :
+                                ("department".equals(state.getAttribute("deptType")) ? TEMPLATE[69] : TEMPLATE[13]));
+            case 14:
                 /*
                  * buildContextForTemplate chef_site-siteInfo-editInfoConfirm.vm
                  *
@@ -5030,11 +5040,11 @@ public class SiteAction extends PagedResourceActionII {
         if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
             if (termProp == null)
                 termProp = new HashMap<String, String>();
-            termProp.put(SITE_DEPARTMENT_TYPE, "school");
-        }else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+            termProp.put(PROP_DEVTEK_DEPARTMENT_TYPE, "school");
+        } else if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)) {
             if (termProp == null)
                 termProp = new HashMap<String, String>();
-            termProp.put(SITE_DEPARTMENT_TYPE, "department");
+            termProp.put(PROP_DEVTEK_DEPARTMENT_TYPE, "department");
         }
 
 
@@ -5169,11 +5179,11 @@ public class SiteAction extends PagedResourceActionII {
             if (getBooleanAttribute(state, IS_DISPLAY_ONLY_SCHOOL, false)) {
                 if (termProp == null)
                     termProp = new HashMap<String, String>();
-                termProp.put(SITE_DEPARTMENT_TYPE, "school");
-            } else if(getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)){
+                termProp.put(PROP_DEVTEK_DEPARTMENT_TYPE, "school");
+            } else if (getBooleanAttribute(state, "IS_DISPLAY_ONLY_DEPARTMENT", false)) {
                 if (termProp == null)
                     termProp = new HashMap<String, String>();
-                termProp.put(SITE_DEPARTMENT_TYPE, "department");
+                termProp.put(PROP_DEVTEK_DEPARTMENT_TYPE, "department");
             }
 
             if (securityService.isSuperUser()) {
@@ -9009,7 +9019,7 @@ public class SiteAction extends PagedResourceActionII {
                                     userAuditList.add(userAuditString);
                                 }
                                 // remove the properties from the user properties edit.
-                                removeUserPropertiesByEids(Arrays.asList(user.getEid()), Arrays.asList("devtek-school-id"));
+                                removeUserPropertiesByEids(Arrays.asList(user.getEid()), Arrays.asList(PROP_DEVTEK_SCHOOL));
                             }
                         } catch (UserNotDefinedException e) {
                             log.error(this + ".doUpdate_participant: IdUnusedException " + rId + ". ", e);
@@ -15840,6 +15850,7 @@ public class SiteAction extends PagedResourceActionII {
         Object value = state.getAttribute(attributeName);
         return value != null ? (boolean) value : defaultValue;
     }
+
     public boolean removeUserPropertiesByEids(List<String> eids, List<String> propertyNames) {
         if (eids == null || eids.isEmpty() || propertyNames == null || propertyNames.isEmpty()) {
             log.warn("No EIDs or property names provided");
