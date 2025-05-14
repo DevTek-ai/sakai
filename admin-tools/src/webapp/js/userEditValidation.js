@@ -137,7 +137,12 @@ USER.validateCurrentPassword = function () {
 
 // Validate the form (enabled/disable the submit button)
 USER.validateForm = function () {
-
+  const emailField = USER.get("email");
+  const userIdField = USER.get("user_eid");
+  if (emailField && userIdField && emailField.value) {
+    userIdField.value = emailField.value;
+  }
+  
   const submitButton = USER.get("eventSubmit_doSave");
   submitButton && (submitButton.disabled = !(USER.userValid && USER.passwordsMatch && USER.emailValid && (USER.isSuperUser || (USER.passwordValid && USER.currentPassValid))));
   setMainFrameHeightNow(window.name);

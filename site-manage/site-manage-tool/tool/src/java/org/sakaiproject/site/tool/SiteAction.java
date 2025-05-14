@@ -201,7 +201,7 @@ public class SiteAction extends PagedResourceActionII {
             "-school-list",
             "-school-editInfo",
             "-dept-list",
-            "-dept-editInfo",
+            "-dept-editInfo", // 69
     };
 
     /**

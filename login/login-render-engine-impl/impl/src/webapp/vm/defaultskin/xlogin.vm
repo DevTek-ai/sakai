@@ -11,7 +11,7 @@
             .portalBody {
                 display: flex;
                 align-items: center;
-                min-height: 90vh;
+                min-height: 80vh;
                 margin: 0;
             }
             #sakai-login-dialog {

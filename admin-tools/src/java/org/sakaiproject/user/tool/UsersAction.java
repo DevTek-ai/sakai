@@ -1413,12 +1413,38 @@ public class UsersAction extends PagedResourceActionII
 		// add if needed
 		if (user == null)
 		{
+
 			// make sure we have eid
 			if (isEidEditable)
 			{
 				if (eid == null)
 				{
 					addAlert(state, rb.getString("usecre.eidmis"));
+					return false;
+				}
+				else if (firstName == null)
+				{
+					addAlert(state, rb.getString("usecre.firstmis"));
+					return false;
+				}
+				else if (lastName == null)
+				{
+					addAlert(state, rb.getString("usecre.lastmis"));
+					return false;
+				}
+				else if (email == null)
+				{
+					addAlert(state, rb.getString("usecre.emailmis"));
+					return false;
+				}
+				else if (pw == null)
+				{
+					addAlert(state, rb.getString("usecre.pwmis"));
+					return false;
+				}
+				else if (pwConfirm == null)
+				{
+					addAlert(state, rb.getString("usecre.pwConfirmmis"));
 					return false;
 				}
 			}
@@ -1537,6 +1563,35 @@ public class UsersAction extends PagedResourceActionII
 		// update
 		else
 		{
+		 	// First, preserve the current values in the session state
+			// This ensures we maintain values when validation errors occur
+			state.setAttribute("valueEid", eid);
+			state.setAttribute("valueFirstName", firstName);
+			state.setAttribute("valueLastName", lastName);
+			state.setAttribute("valueEmail", email);
+			if (type != null) state.setAttribute("valueType", type);
+
+			// Add validation for edit mode - requiring all fields similar to creation
+			if (mode != null && mode.equalsIgnoreCase("edit") && !mode.equalsIgnoreCase("remove")) {
+				if (firstName == null) {
+					addAlert(state, rb.getString("usecre.firstmis"));
+					return false;
+				}
+				else if (lastName == null) {
+					addAlert(state, rb.getString("usecre.lastmis"));
+					return false;
+				}
+				else if (email == null) {
+					addAlert(state, rb.getString("usecre.emailmis"));
+					return false;
+				}
+				// Only check EID if it's editable
+				if (isEidEditable(state) && eid == null) {
+					addAlert(state, rb.getString("usecre.eidmis"));
+					return false;
+				}
+			}
+
 			if (!user.isActiveEdit())
 			{
 				try
