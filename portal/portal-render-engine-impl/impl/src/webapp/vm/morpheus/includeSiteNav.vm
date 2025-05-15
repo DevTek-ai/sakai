@@ -273,10 +273,11 @@
             </button>
         #end
         <div class="collapse #if($userSchoolId != '') show #end" id="project-pages-${safeSiteId}">
+
             <ul class="nav flex-column">
                 #foreach ($page in $projectPages)
                     <li class="nav-item">
-                        <button class="btn btn-nav w-100 d-flex ps-5 text-start align-items-center new-dropdowns" 
+                                <button class="btn btn-nav w-100 d-flex #if($userSchoolId != '') ps-4 #else ps-5 #end text-start align-items-center new-dropdowns" 
                                 data-bs-toggle="collapse" 
                                 data-bs-target="#project-page-${safeSiteId}-${velocityCount}" 
                                 aria-expanded="false" 

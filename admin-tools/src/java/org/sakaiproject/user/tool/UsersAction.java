@@ -26,13 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -302,9 +296,9 @@ public class UsersAction extends PagedResourceActionII
 		}
 
 
-
+		String userType = getStringAttribute(userDirectoryService.getCurrentUser().getProperties().get("devtek-user-type"), "");
 		// if not logged in as the super user, we won't do anything
-		if ((!singleUser) && (!createUser) && (!securityService.isSuperUser()))
+		if ((!Objects.equals(userType, "admin_maintain") && (!singleUser) && (!createUser) && (!securityService.isSuperUser())))
 		{
 			context.put("tlang",rb);
 			return (String) getContext(rundata).get("template") + "_noaccess";

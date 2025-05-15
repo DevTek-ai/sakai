@@ -147,7 +147,7 @@
 			<!-- Language -->
 			<div class="mb-3 row">
 				<label for="locales" class="col-sm-2 col-form-label">
-					Department Admin
+				<span class="red">*</span>	Department Admin
 				</label>
 				<div class="col-sm-4">
 					<input type="hidden" name="new_name" id="new_name" size="40" maxlength="10" value="devtek-site-admin" class="form-control"/>

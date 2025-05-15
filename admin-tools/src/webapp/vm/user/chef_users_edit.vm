@@ -38,7 +38,7 @@ function removeOptionalAttributeBlock(elem) {
 	#toolbar($menu)
 #end
 	
-
+	
 		<h3>
 			$tlang.getString("useedi.revandmod")
 		</h3>
@@ -241,6 +241,11 @@ function removeOptionalAttributeBlock(elem) {
 					<input type="hidden" name="new_name" id="new_name" value="devtek-user-type" class="form-control"/>
 					<input type="hidden" name="new_value" id="new_value" value="${type}" class="form-control sakai-glow"/>
 
+					<!-- Field for storing school id with user -->
+					#if(!$!superUser)
+						<input type="hidden" name="new_name" id="new_name" value="devtek-school-id" class="form-control"/>
+						<input type="hidden" name="new_value" id="new_value" value="$service.getCurrentUser().getProperties().get("devtek-school-id")" class="form-control sakai-glow"/>
+					#end
 					<script>
 						function updateTypeValue(value) {
 							const map = {

@@ -10801,6 +10801,11 @@ public class SiteAction extends PagedResourceActionII {
             // site title is editable; cannot but null/empty after HTML stripping, and cannot exceed max length
             String titleOrig = params.getString("title");
             String titleStripped = formattedText.stripHtmlFromText(titleOrig, true, true);
+
+            // validate the epartment admin
+            String paramValue = StringUtils.trimToNull(params.getStrings("new_value")[1]);
+            isParamValid(paramValue, state);
+
             if (isSiteTitleValid(titleOrig, titleStripped, state)) {
                 siteInfo.title = titleStripped;
             }
@@ -15239,7 +15244,13 @@ public class SiteAction extends PagedResourceActionII {
         }
 
     }
-
+    private boolean isParamValid(String value, SessionState state) {
+        if (value == null || value.trim().length() == 0) {
+            addAlert(state, rb.getString("java.specify.admin"));
+            return false;
+        }
+        return true;
+    }
     /**
      * Get the list of tools that are in a list of sites that are available for import.
      * <p>
